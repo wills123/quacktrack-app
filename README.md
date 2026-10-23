@@ -6,10 +6,6 @@ day-to-day system for inventory, ordering, field-asset tracking, and a few
 third-party integrations. This README reflects the app's current feature
 set, not just its original scope.
 
-> **Note on this repository:** this is an export of the application code and
-> runtime configuration only (no internal docs, ops notes, or test suite).
-> It's meant to give someone reviewing the code a clear, accurate picture of
-> what's here and how to run it locally.
 
 ## What it does
 

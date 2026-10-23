@@ -1,0 +1,136 @@
+/*
+ * order_confirmation.css — "Order sent" confirmation page.
+ * Shell, cards, buttons and item rows come from orders.css (-> stock.css).
+ */
+
+.confirmation-body {
+  display: grid;
+  width: 100%;
+  gap: 16px;
+  padding: 16px 24px 60px;
+}
+
+.confirmation-hero {
+  display: flex;
+  gap: 16px;
+  padding: 20px 22px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--brand-green);
+  border-radius: var(--r-md);
+  align-items: center;
+  background: var(--surface);
+  box-shadow: var(--sh-xs);
+}
+
+.confirmation-hero-icon {
+  display: inline-flex;
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  border-radius: var(--r-full);
+  align-items: center;
+  justify-content: center;
+  background: var(--badge-in-bg);
+  color: var(--badge-in-text);
+}
+
+.confirmation-hero h2 { margin: 0 0 4px; font-size: 1.125rem; }
+
+.confirmation-hero p { margin: 0; color: var(--text-secondary); line-height: 1.5; }
+
+.confirmation-section-title {
+  margin: 0;
+  padding: 14px 18px 0;
+  color: var(--text-muted);
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.confirmation-steps {
+  display: grid;
+  gap: 12px;
+  padding: 12px 18px 18px;
+  margin: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.confirmation-steps li {
+  position: relative;
+  padding-left: 36px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  counter-increment: step;
+}
+
+.confirmation-steps li::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-full);
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-green);
+  color: #fff;
+  content: counter(step);
+  font-size: .75rem;
+  font-weight: 700;
+}
+
+.confirmation-steps strong { color: var(--text-primary); }
+
+.confirmation-items { padding: 12px 18px 18px; }
+
+.confirmation-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Manual email dialog */
+.confirmation-dialog {
+  width: min(36rem, calc(100vw - 2rem));
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: var(--sh-lg, 0 12px 32px rgb(0 0 0 / 25%));
+}
+
+.confirmation-dialog::backdrop { background: rgb(0 0 0 / 50%); }
+
+.confirmation-dialog-body { display: grid; gap: 10px; padding: 20px 22px; }
+
+.confirmation-dialog h2 { margin: 0; font-size: 1.125rem; }
+
+.confirmation-dialog p { margin: 0; color: var(--text-secondary); line-height: 1.5; }
+
+.confirmation-dialog textarea {
+  width: 100%;
+  min-height: 12rem;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: .8125rem;
+}
+
+.confirmation-dialog-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+@media (width <= 768px) {
+  .confirmation-body { padding: 14px 16px 60px; }
+
+  .confirmation-hero { align-items: flex-start; }
+}
+
+@media (width <= 600px) {
+  .confirmation-actions > * { flex: 1 1 100%; }
+
+  .confirmation-dialog-actions { flex-direction: column-reverse; }
+
+  .confirmation-dialog-actions > * { width: 100%; }
+}

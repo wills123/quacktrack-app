@@ -1,0 +1,119 @@
+/*!
+ * Media Elements Overflow Fix
+ * Addresses browser warning about overflow: visible on img, video, and canvas elements
+ * See: https://github.com/WICG/view-transitions/blob/main/debugging_overflow_on_images.md
+ */
+
+/* High specificity fix for all media elements */
+html body img, 
+html body video, 
+html body canvas {
+  overflow: hidden !important;
+  contain: layout style paint !important;
+}
+
+/* Ultra-specific fixes for problematic elements */
+html body #scannerVideo,
+html body #cameraFeed,
+html body video[id*="scanner"],
+html body video[id*="camera"] {
+  overflow: hidden !important;
+  contain: layout style paint size !important;
+  border-radius: var(--radius-md, 0.375rem);
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+html body #cameraCanvas,
+html body canvas[id*="camera"] {
+  overflow: hidden !important;
+  contain: layout style paint size !important;
+}
+
+/* Product card images with maximum specificity */
+html body .card img,
+html body .cards .card img,
+html body .card-clickable img,
+html body div.card img,
+html body div.cards div.card img {
+  overflow: hidden !important;
+  contain: layout style paint !important;
+  border-radius: var(--radius-md, 0.375rem) var(--radius-md, 0.375rem) 0 0;
+}
+
+/* Modal media elements */
+html body .modal img,
+html body .modal video,
+html body .modal canvas,
+html body div.modal img,
+html body div.modal video,
+html body div.modal canvas {
+  overflow: hidden !important;
+  contain: layout style paint !important;
+}
+
+/* Prevent any JavaScript from overriding */
+img[style*="overflow"],
+video[style*="overflow"],
+canvas[style*="overflow"] {
+  overflow: hidden !important;
+}
+
+/* View transition specific fixes */
+@supports (view-transition-name: auto) {
+  img, video, canvas {
+    overflow: hidden !important;
+    contain: layout style paint !important;
+  }
+}
+
+/* Disable view transitions on media elements if they cause issues */
+img, video, canvas {
+  view-transition-name: none !important;
+}
+
+/*
+ * Root view-transition snapshot fix: header.php enables cross-document
+ * view transitions (meta name="view-transition"). On the first navigation
+ * into the app, Chrome can size the ::view-transition-old/new(root)
+ * snapshot boxes to the wrong height against our sticky topbar/sidebar,
+ * leaving a bare strip above the real content until the next navigation.
+ * Force the transition pseudo-elements to the viewport height so there's
+ * no unstyled gap while the snapshot is showing.
+ */
+@supports (view-transition-name: auto) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    height: 100vh !important;
+  }
+}
+
+/* Alternative approach - force clip instead of overflow */
+img, video, canvas {
+  clip-path: inset(0) !important;
+}
+
+/* Force containment for all media during animations */
+@media (prefers-reduced-motion: no-preference) {
+  html body img, 
+  html body video, 
+  html body canvas {
+    backface-visibility: hidden !important;
+    transform: translateZ(0) !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Specific modal containment */
+html body #scannerModal video,
+html body #importProductModal video,
+html body #addProductModal video,
+html body #addProductModal canvas,
+html body #editProductModal img,
+html body #productDetailModal img {
+  contain: layout style paint size !important;
+  overflow: hidden !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+}

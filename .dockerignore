@@ -1,0 +1,25 @@
+# Keep build contexts small and keep secrets/state out of images.
+.git
+.github
+node_modules
+vendor
+app/vendor
+.env
+.env.*
+!.env.example
+uploads
+logs
+backups
+docs
+reports
+security-testing
+*.md
+!README.md
+*.bak
+*.backup
+.phpcs-cache
+.phpstan-cache
+.vscode
+.kiro
+.code
+.claude

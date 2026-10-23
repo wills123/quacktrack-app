@@ -1,0 +1,110 @@
+/*!
+ * Quack Track Inventory Management System - Base Typography
+ * Version: 2.0
+ * Description: Typography system with semantic heading levels
+ */
+
+/* ===================================================================
+   TYPOGRAPHY SYSTEM
+   ================================================================ */
+
+/**
+ * Typography Hierarchy
+ *
+ * Consistent typography system with semantic heading levels,
+ * proper spacing, and accessibility considerations.
+ */
+
+/* Heading styles with consistent hierarchy */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 var(--space-lg, 1.5rem) 0;
+  font-weight: var(--font-weight-semibold, 600);
+  line-height: var(--line-height-tight, 1.25);
+  letter-spacing: var(--letter-spacing-tight, -0.025em);
+  color: var(--color-gray-900, #111827);
+}
+
+h1 {
+  font-size: var(--font-size-3xl, 1.875rem);
+  font-weight: var(--font-weight-bold, 700);
+  margin-bottom: var(--space-xl, 2rem);
+}
+
+h2 {
+  font-size: var(--font-size-2xl, 1.5rem);
+  margin-bottom: var(--space-lg, 1.5rem);
+}
+
+h3 {
+  font-size: var(--font-size-xl, 1.25rem);
+  margin-bottom: var(--space-md, 1rem);
+}
+
+h4 {
+  font-size: var(--font-size-lg, 1.125rem);
+  margin-bottom: var(--space-md, 1rem);
+}
+
+h5 {
+  font-size: var(--font-size-base, 1rem);
+  margin-bottom: var(--space-sm, 0.5rem);
+}
+
+h6 {
+  font-size: var(--font-size-sm, 0.875rem);
+  margin-bottom: var(--space-sm, 0.5rem);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+/* Paragraph and text elements */
+p {
+  margin: 0 0 var(--space-md, 1rem) 0;
+  line-height: var(--line-height-relaxed, 1.625);
+}
+
+small {
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--color-gray-600, #4b5563);
+}
+
+strong, b {
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+em, i {
+  font-style: italic;
+}
+
+/* Code styling */
+code {
+  font-family: var(--font-family-mono, monospace);
+  font-size: var(--font-size-sm, 0.875rem);
+  background-color: var(--color-gray-100, #f3f4f6);
+  padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
+  border-radius: var(--radius-sm, 0.25rem);
+  color: var(--color-gray-800, #1f2937);
+}
+
+/* Main content area */
+main {
+  display: block;
+  width: 100%;
+  min-height: calc(100vh - 64px);
+}
+
+/* Remove top padding on redesigned pages — the masthead handles spacing */
+main.main-content {
+  padding-top: 0;
+}
+
+/* Ensure all content is visible */
+h1, h2, h3, h4, h5, h6, p, div, table, .card, .grid {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Debug: Ensure content has background for visibility */
+.card {
+  background: var(--color-white, #fff) !important;
+  border: 1px solid var(--color-gray-200, #e5e7eb) !important;
+}

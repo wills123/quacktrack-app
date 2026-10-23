@@ -1,0 +1,4 @@
+# Refuse plain-text connections: every client must use TLS. (Unix-socket connections from inside
+# this container, such as backups and release.sh, are not network connections and still work.)
+[mysqld]
+require_secure_transport=ON

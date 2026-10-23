@@ -1,0 +1,68 @@
+server {
+    listen 80;
+    server_name localhost;
+    client_max_body_size 50M;
+    root /var/www/html;
+    index index.php index.html;
+
+    # Disable automatic redirects and directory handling
+    absolute_redirect off;
+    server_name_in_redirect off;
+    port_in_redirect off;
+    merge_slashes off;
+    autoindex off;
+
+    # Remove trailing slashes
+    rewrite ^/(.*)/$ /$1 permanent;
+    
+    # Updated CSP to include Cloudflare and CDN domains
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://*.cloudflareinsights.com https://cdn.jsdelivr.net https://*.jsdelivr.net https://unpkg.com; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://*.cloudflareinsights.com https://cdn.jsdelivr.net https://*.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://*.cloudflare.com; style-src-elem 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://*.cloudflare.com; connect-src 'self' https://*.cloudflareinsights.com https://cloudflareinsights.com; img-src 'self' data: blob: https: http: *; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self'; font-src 'self' https://cdnjs.cloudflare.com data:;" always;
+    add_header Permissions-Policy "camera=self";
+    
+    resolver 127.0.0.11 valid=30s;
+
+    # Include MIME types
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    # Uploads directory - serve directly
+    location /uploads/ {
+        alias /var/www/uploads/;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # Assets directory - serve directly
+    location /assets/ {
+        root /var/www;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # Deny access to PHP files directly
+    location ~ \.php$ {
+        return 404;
+    }
+
+    # Main location - handle all requests
+    location / {
+        try_files $uri @router;
+    }
+
+    # Router handler
+    location @router {
+        fastcgi_pass quacktrack-php:9000;
+        fastcgi_param SCRIPT_FILENAME $document_root/router.php;
+        include fastcgi_params;
+        fastcgi_read_timeout 300;
+        fastcgi_buffers 50 50M;
+        fastcgi_buffer_size 500M;
+    }
+
+    # Error pages
+    error_page 403 /router.php?code=403;
+    error_page 404 /router.php?code=404;
+    error_page 500 502 503 504 /router.php?code=500;
+}

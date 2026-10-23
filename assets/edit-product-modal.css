@@ -1,0 +1,390 @@
+/*!
+ * Edit Product Modal Styles
+ * Clean, simple, mobile-friendly modal design
+ */
+
+/* ===================================================================
+   EDIT PRODUCT MODAL
+   ================================================================ */
+
+/* Modal positioning and backdrop */
+#editProductModal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Modal content */
+#editProductModal .modal-content {
+  background: var(--surface, #fff);
+  border-radius: 12px;
+  box-shadow: 0 20px 25px rgb(0 0 0 / 15%);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Scrollbar — thin, token-driven (inherits from 02-reset.css global rules) */
+#editProductModal .modal-content {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border, #e2e8f0) transparent;
+}
+
+#editProductModal .modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+#editProductModal .modal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#editProductModal .modal-content::-webkit-scrollbar-thumb {
+  background: var(--border, #e2e8f0);
+  border-radius: 999px;
+}
+
+#editProductModal .modal-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted, #94a3b8);
+}
+
+/* Modal header */
+#editProductModal .modal-header {
+  background: var(--brand-green, #006A4E);
+  color: #fff;
+  padding: 1.5rem;
+  border-radius: 12px 12px 0 0;
+  border-bottom: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#editProductModal .modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+#editProductModal .close-button {
+  background: rgb(255 255 255 / 20%);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  transition: background-color 0.2s;
+}
+
+#editProductModal .close-button:hover {
+  background: rgb(255 255 255 / 30%);
+  color: #fff;
+  border-color: transparent;
+}
+
+/* Modal body */
+#editProductModal .modal-body {
+  padding: 0;
+}
+
+/* Form sections */
+#editProductModal .form-section {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border, #f0f0f0);
+}
+
+#editProductModal .form-section:last-child {
+  border-bottom: none;
+}
+
+/* Image section */
+#editProductModal .current-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 1rem;
+  background: var(--surface-2, #f8f9fa);
+  border: 2px solid var(--border, #e9ecef);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+#editProductModal .current-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#editProductModal .image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted, #6c757d);
+  text-align: center;
+}
+
+#editProductModal .image-placeholder svg {
+  margin-bottom: 0.5rem;
+  opacity: 0.5;
+}
+
+#editProductModal .image-placeholder span {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Image upload section */
+#editProductModal .image-upload-section {
+  text-align: center;
+  margin-top: 0.75rem;
+}
+
+#editProductModal .upload-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--color-primary, #006A4E) 0%, var(--color-primary-dark, #004d38) 100%);
+  color: white;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid var(--color-primary, #006A4E);
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgb(0 106 78 / 20%);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#editProductModal .upload-button:hover {
+  background: linear-gradient(135deg, var(--color-primary-dark, #004d38) 0%, #003d2b 100%);
+  border-color: var(--color-primary-dark, #004d38);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgb(0 106 78 / 30%);
+}
+
+/* Form grid */
+#editProductModal .form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* Form groups */
+#editProductModal .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+#editProductModal .form-group label {
+  font-weight: 600;
+  color: var(--text-secondary, #374151);
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+#editProductModal .form-group input,
+#editProductModal .form-group select {
+  padding: 0.75rem;
+  border: 2px solid var(--input-border, #e5e7eb);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: var(--input-bg, #fff);
+  color: var(--text-primary, #111827);
+}
+
+#editProductModal .form-group input:focus,
+#editProductModal .form-group select:focus {
+  outline: none;
+  border-color: var(--color-primary, #006A4E);
+  box-shadow: 0 0 0 3px rgb(0 106 78 / 10%);
+}
+
+#editProductModal .form-group input::placeholder {
+  color: var(--text-muted, #9ca3af);
+  font-style: italic;
+}
+
+/* Form actions */
+#editProductModal .form-actions {
+  padding: 1.5rem;
+  background: var(--surface-2, #f8f9fa);
+  border-top: 1px solid var(--border, #e5e7eb);
+  border-radius: 0 0 12px 12px;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+}
+
+#editProductModal .form-actions .btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  font-size: 0.875rem;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  line-height: 1.5;
+  background: var(--color-primary, #006A4E);
+  color: white;
+}
+
+#editProductModal .btn-secondary {
+  background: var(--color-primary, #006A4E);
+  color: white;
+  font-weight: 500;
+}
+
+#editProductModal .btn-secondary:hover {
+  background: var(--color-primary-dark, #004d38);
+}
+
+#editProductModal .btn-primary {
+  background: var(--color-primary, #006A4E);
+  color: white;
+  font-weight: 500;
+}
+
+#editProductModal .btn-primary:hover {
+  background: var(--color-primary-dark, #004d38);
+}
+
+#editProductModal .btn-primary:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Override any conflicting styles - FINAL VERSION */
+#editProductModal .form-actions .btn {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: white !important;
+  font-family: inherit !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  text-shadow: none !important;
+  text-decoration: none !important;
+  position: relative !important;
+  z-index: 999 !important;
+  min-height: auto !important;
+  background: var(--color-primary, #006A4E) !important;
+  border: none !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s ease !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+#editProductModal .btn-secondary {
+  background: var(--color-primary, #006A4E) !important;
+  color: white !important;
+  font-weight: 500 !important;
+}
+
+#editProductModal .btn-secondary:hover {
+  background: var(--color-primary-dark, #004d38) !important;
+}
+
+#editProductModal .btn-primary {
+  background: var(--color-primary, #006A4E) !important;
+  color: white !important;
+  font-weight: 500 !important;
+}
+
+#editProductModal .btn-primary:hover {
+  background: var(--color-primary-dark, #004d38) !important;
+}
+
+/* Force button layout */
+#editProductModal .form-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  padding: 1.5rem !important;
+  background: var(--surface-2, #f8f9fa) !important;
+  border-top: 1px solid var(--border, #e5e7eb) !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+/* Mobile responsive */
+@media (width <= 768px) {
+  #editProductModal {
+    padding: 0.5rem;
+  }
+
+  #editProductModal .modal-content {
+    max-height: 95vh;
+  }
+
+  #editProductModal .modal-header {
+    padding: 1rem;
+  }
+
+  #editProductModal .modal-header h2 {
+    font-size: 1.125rem;
+  }
+
+  #editProductModal .form-section {
+    padding: 1rem;
+  }
+
+  #editProductModal .current-image-container {
+    width: 120px;
+    height: 120px;
+  }
+
+  #editProductModal .form-actions {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  #editProductModal .form-actions .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem 2rem;
+  }
+}
+
+@media (width <= 480px) {
+  #editProductModal .modal-header {
+    padding: 0.75rem;
+  }
+
+  #editProductModal .form-section {
+    padding: 0.75rem;
+  }
+
+  #editProductModal .form-actions {
+    padding: 0.75rem;
+  }
+}

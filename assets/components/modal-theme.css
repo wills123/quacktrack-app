@@ -1,0 +1,616 @@
+/*
+ * modal-theme.css — v2 token overrides for modals, notifications, and flash messages
+ *
+ * Loaded after modals.css and notifications.css via main.css.
+ * Replaces all hardcoded hex colours with design-system tokens so
+ * both light and dark mode work correctly.
+ *
+ * Dark mode is triggered by [data-kit-theme="dark"] on <html>.
+ */
+
+/* ============================================================
+   MODAL BACKDROP
+   ============================================================ */
+.modal {
+  background: rgb(0 0 0 / 55%);
+  backdrop-filter: blur(3px);
+}
+
+/* ============================================================
+   MODAL CONTENT SHELL
+   ============================================================ */
+.modal-content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-xl);
+  color: var(--text-primary);
+  transition: background var(--t-slow), border-color var(--t-slow);
+}
+
+/* ── Modal header ──────────────────────────────────────────── */
+.modal-header {
+  border-bottom-color: var(--border);
+  background: var(--surface-2);
+  transition: background var(--t-slow), border-color var(--t-slow);
+}
+
+.modal-header h2,
+.modal-header h3 {
+  color: var(--text-primary);
+}
+
+.modal-header .modal-description {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+/* Top-level h2 inside modal-content (non-header pattern) */
+.modal-content > h2,
+.modal-content > h3 {
+  color: var(--text-primary);
+  padding: 18px 20px 14px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  transition: background var(--t-slow), border-color var(--t-slow);
+}
+
+/* ── Modal body ────────────────────────────────────────────── */
+.modal-body {
+  background: var(--surface);
+  color: var(--text-primary);
+  transition: background var(--t-slow);
+}
+
+/* ── Modal footer ──────────────────────────────────────────── */
+.modal-footer {
+  border-top-color: var(--border);
+  background: var(--surface-2);
+  transition: background var(--t-slow), border-color var(--t-slow);
+}
+
+/* ── Close button ──────────────────────────────────────────── */
+.close-button {
+  color: var(--text-muted);
+  border-radius: var(--r-sm);
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+
+.close-button:hover {
+  background: var(--color-error);
+  color: #fff;
+  border-color: var(--color-error);
+}
+
+/* ── Form elements inside modals ───────────────────────────── */
+.modal-content .form-group label {
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.modal-content .form-group input[type="text"],
+.modal-content .form-group input[type="number"],
+.modal-content .form-group input[type="email"],
+.modal-content .form-group input[type="search"],
+.modal-content .form-group select,
+.modal-content .form-group textarea {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+  border-radius: var(--r-sm);
+  transition: background var(--t-slow), border-color var(--t-fast), box-shadow var(--t-fast), color var(--t-slow);
+}
+
+.modal-content .form-group input:focus,
+.modal-content .form-group select:focus,
+.modal-content .form-group textarea:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px rgb(0 106 78 / 12%);
+  outline: none;
+}
+
+.modal-content .form-group input::placeholder,
+.modal-content .form-group textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.modal-content .form-help {
+  color: var(--text-muted);
+  font-size: 11.5px;
+}
+
+/* ── Product detail modal overrides ────────────────────────── */
+.product-detail-modal .product-facts-grid {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.product-detail-modal .detail-item {
+  border-bottom-color: var(--border-subtle);
+}
+
+.product-detail-modal .detail-item:nth-child(even) {
+  background: var(--surface-2);
+}
+
+.product-detail-modal .detail-label {
+  color: var(--text-muted);
+}
+
+.product-detail-modal .detail-value {
+  color: var(--text-primary);
+}
+
+.product-detail-modal .product-stock-summary {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+.product-detail-modal .stock-item {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.product-detail-modal .stock-label {
+  color: var(--text-muted);
+}
+
+.product-detail-modal .stock-value {
+  color: var(--text-primary);
+}
+
+.product-detail-modal .add-to-cart-card {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+.product-detail-modal .product-notes-input {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+}
+
+.product-detail-modal .product-notes-input::placeholder {
+  color: var(--text-muted);
+}
+
+.product-detail-modal .product-quantity-stepper {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+}
+
+.product-detail-modal .product-quantity-input {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.product-detail-modal .product-image-container {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+.product-detail-modal .product-meta {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.product-detail-modal .meta-label {
+  color: var(--text-muted);
+}
+
+.product-detail-modal .meta-value {
+  color: var(--text-primary);
+}
+
+/* Product picker list items */
+#vanPickerList .picker-item,
+[id$="PickerList"] .picker-item {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  transition: background var(--t-fast);
+}
+
+#vanPickerList .picker-item:hover,
+[id$="PickerList"] .picker-item:hover {
+  background: var(--table-hover);
+}
+
+#vanPickerList,
+[id$="PickerList"] {
+  border-color: var(--border);
+  background: var(--surface);
+  border-radius: var(--r-sm);
+}
+
+/* ============================================================
+   CONFIRMATION MODAL
+   ============================================================ */
+.confirmation-modal__content {
+  background: var(--surface);
+  border-color: var(--brand-green);
+  color: var(--text-primary);
+  transition: background var(--t-slow), border-color var(--t-slow);
+}
+
+.confirmation-modal__header {
+  border-bottom-color: var(--border);
+}
+
+.confirmation-modal__title {
+  color: var(--text-primary);
+}
+
+.confirmation-modal__body {
+  background: var(--surface);
+}
+
+.confirmation-modal__message {
+  color: var(--text-secondary);
+}
+
+.confirmation-modal__actions {
+  border-top-color: var(--border);
+  background: var(--surface-2);
+  transition: background var(--t-slow), border-color var(--t-slow);
+}
+
+/* ============================================================
+   FLASH MESSAGES — token-based, dark mode aware
+   ============================================================ */
+.flash {
+  background: var(--badge-adj-bg);
+  color: var(--badge-adj-text);
+  border: 1.5px solid var(--color-warning);
+  border-radius: var(--r-sm);
+  padding: 11px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  transition: background var(--t-slow), color var(--t-slow), border-color var(--t-slow);
+}
+
+.flash.success {
+  background: var(--badge-in-bg);
+  color: var(--badge-in-text);
+  border-color: var(--color-success);
+}
+
+.flash.error {
+  background: var(--badge-out-bg);
+  color: var(--badge-out-text);
+  border-color: var(--color-error);
+}
+
+.flash.warning {
+  background: var(--badge-adj-bg);
+  color: var(--badge-adj-text);
+  border-color: var(--color-warning);
+}
+
+.flash.info {
+  background: var(--badge-info-bg);
+  color: var(--badge-info-text);
+  border-color: var(--color-info);
+}
+
+/* ── Flash icon pseudo-elements — dark-mode-safe SVGs ───────── */
+.flash::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+  opacity: .8;
+}
+
+/* Use currentColor-friendly filter trick for SVG icons */
+.flash.success::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9' fill='%2322c55e'/%3E%3Cpath d='M6 10l3 3 5-5' stroke='white' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.flash.error::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9' fill='%23f87171'/%3E%3Cpath d='M10 6v4M10 14h.01' stroke='white' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.flash.warning::before,
+.flash:not(.success, .error, .info)::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 2L1.5 17h17L10 2z' fill='%23FFD42A'/%3E%3Cpath d='M10 8v4M10 14h.01' stroke='%23111827' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.flash.info::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9' fill='%2360a5fa'/%3E%3Cpath d='M10 9v5M10 6h.01' stroke='white' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   NOTIFICATIONS — token-based, dark mode aware
+   ============================================================ */
+.notification--success {
+  background: var(--badge-in-bg);
+  border-color: var(--color-success);
+  color: var(--badge-in-text);
+}
+
+.notification--success .notification__icon {
+  color: var(--color-success);
+}
+
+.notification--error {
+  background: var(--badge-out-bg);
+  border-color: var(--color-error);
+  color: var(--badge-out-text);
+}
+
+.notification--error .notification__icon {
+  color: var(--color-error);
+}
+
+.notification--warning {
+  background: var(--badge-adj-bg);
+  border-color: var(--color-warning);
+  color: var(--badge-adj-text);
+}
+
+.notification--warning .notification__icon {
+  color: var(--color-warning);
+}
+
+.notification--info {
+  background: var(--badge-info-bg);
+  border-color: var(--color-info);
+  color: var(--badge-info-text);
+}
+
+.notification--info .notification__icon {
+  color: var(--color-info);
+}
+
+/* Notification shell */
+.notification {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-primary);
+  box-shadow: var(--sh-lg);
+  border-radius: var(--r-md);
+  transition: background var(--t-slow), border-color var(--t-slow), color var(--t-slow);
+}
+
+/* ============================================================
+   DARK MODE — explicit overrides where tokens aren't enough
+   ============================================================ */
+[data-kit-theme="dark"] .modal {
+  background: rgb(0 0 0 / 70%);
+}
+
+[data-kit-theme="dark"] .modal-content {
+  box-shadow: 0 24px 48px rgb(0 0 0 / 55%), 0 4px 12px rgb(0 0 0 / 40%);
+}
+
+/* Notification base in dark */
+[data-kit-theme="dark"] .notification {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: var(--sh-xl);
+}
+
+/* Ensure confirmation modal backdrop is opaque enough in dark */
+[data-kit-theme="dark"] .confirmation-modal__backdrop {
+  background: rgb(0 0 0 / 80%);
+}
+
+/* Input placeholder color in dark modals */
+[data-kit-theme="dark"] .modal-content input::placeholder,
+[data-kit-theme="dark"] .modal-content textarea::placeholder,
+[data-kit-theme="dark"] .modal-content select option {
+  color: var(--text-muted);
+}
+
+/* Select options in dark (browser-controlled but we can hint) */
+[data-kit-theme="dark"] .modal-content select {
+  color-scheme: dark;
+}
+
+/* #addItemModal is fully token-driven via add-item-modal.css — no extra dark overrides needed */
+
+/* ── #editProductModal dark overrides ──────────────────────── */
+[data-kit-theme="dark"] #editProductModal .modal-content {
+  background: var(--surface);
+  border-color: var(--border);
+  scrollbar-color: var(--border, #2d3748) transparent;
+}
+
+/* Header stays green in both modes — no dark override needed */
+
+[data-kit-theme="dark"] #editProductModal .modal-body {
+  background: var(--surface);
+}
+
+[data-kit-theme="dark"] #editProductModal .form-section {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-kit-theme="dark"] #editProductModal .current-image-container {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+[data-kit-theme="dark"] #editProductModal .image-placeholder {
+  background: var(--surface-2);
+  color: var(--text-muted);
+}
+
+[data-kit-theme="dark"] #editProductModal .image-upload-section {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+[data-kit-theme="dark"] #editProductModal input[type="text"],
+[data-kit-theme="dark"] #editProductModal input[type="number"],
+[data-kit-theme="dark"] #editProductModal input[type="url"],
+[data-kit-theme="dark"] #editProductModal select,
+[data-kit-theme="dark"] #editProductModal textarea {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+  color-scheme: dark;
+}
+
+[data-kit-theme="dark"] #editProductModal input::placeholder,
+[data-kit-theme="dark"] #editProductModal textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* Form-actions footer — token-driven but !important needed to beat specificity */
+[data-kit-theme="dark"] #editProductModal .form-actions {
+  background: var(--surface-2) !important;
+  border-top-color: var(--border) !important;
+}
+
+/* Form label text */
+[data-kit-theme="dark"] #editProductModal .form-group label {
+  color: var(--text-secondary);
+}
+
+[data-kit-theme="dark"] #editProductModal .modal-content::-webkit-scrollbar-thumb {
+  background: var(--border);
+}
+
+/* ── Scanner modal overrides (both modes) ──────────────────── */
+
+/* Override inline style on video element via modal context */
+.modal video {
+  border-color: var(--border) !important;
+  border-radius: var(--r-sm) !important;
+  background: var(--bg-subtle) !important;
+}
+
+[data-kit-theme="dark"] .modal video {
+  background: var(--bg) !important;
+  border-color: var(--border) !important;
+}
+
+/* Zoom tip text */
+.modal [style*="color: var(--color-gray-600)"],
+.modal [style*="color:var(--color-gray-600)"] {
+  color: var(--text-muted) !important;
+}
+
+/* ── Profile completion modal dark overrides ───────────────── */
+[data-kit-theme="dark"] #profileCompletionModal .modal-content {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-kit-theme="dark"] #profileCompletionModal .modal-header {
+  background: var(--surface-2);
+  border-bottom-color: var(--border);
+}
+
+[data-kit-theme="dark"] #profileCompletionModal .modal-description {
+  color: var(--text-secondary);
+}
+
+[data-kit-theme="dark"] #profileCompletionModal .modal-body {
+  background: var(--surface);
+}
+
+[data-kit-theme="dark"] #profileCompletionModal input[type="text"],
+[data-kit-theme="dark"] #profileCompletionModal select {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+  color-scheme: dark;
+}
+
+[data-kit-theme="dark"] #profileCompletionModal .modal-footer {
+  background: var(--surface-2);
+  border-top-color: var(--border);
+}
+
+/* ============================================================
+   GLOBAL DARK MODE HARDCODED-COLOUR FIXES
+   These override global style.css rules that use #fff, #fff, etc.
+   directly — not via CSS vars — so they don't flip on their own.
+   ============================================================ */
+
+/* .card-body and .card have background:#fff hardcoded in style.css */
+[data-kit-theme="dark"] .card,
+[data-kit-theme="dark"] .card-body {
+  background: var(--surface) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border) !important;
+}
+
+/* Buttons — secondary still shows white background from --color-white fallback
+   in older browsers that evaluated the fallback before our token override */
+[data-kit-theme="dark"] .btn-secondary {
+  background: var(--surface-2) !important;
+  color: var(--text-secondary) !important;
+  border-color: var(--border) !important;
+}
+
+[data-kit-theme="dark"] .btn-secondary:hover {
+  background: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Search/filter sidebar in dark mode */
+[data-kit-theme="dark"] .filter-sidebar {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-kit-theme="dark"] .sidebar-header {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+[data-kit-theme="dark"] .sidebar-search {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+}
+
+[data-kit-theme="dark"] .filter-radio span,
+[data-kit-theme="dark"] .filter-checkbox span {
+  color: var(--text-secondary);
+}
+
+[data-kit-theme="dark"] .filter-radio:hover,
+[data-kit-theme="dark"] .filter-checkbox:hover {
+  background: var(--table-hover);
+}
+
+/* Toggle label (tracked asset checkbox) */
+[data-kit-theme="dark"] .toggle-label {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+[data-kit-theme="dark"] .toggle-label:has(input:checked) {
+  border-color: var(--brand-green);
+  border-width: 2px;
+  background: rgb(0 106 78 / 12%);
+  box-shadow: 0 0 0 3px rgb(0 106 78 / 10%);
+}
+
+[data-kit-theme="dark"] .toggle-text strong {
+  color: var(--text-primary);
+}
+
+[data-kit-theme="dark"] .toggle-text small {
+  color: var(--text-muted);
+}

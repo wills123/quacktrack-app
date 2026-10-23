@@ -1,0 +1,9 @@
+# syntax=docker/dockerfile:1
+#
+# Immutable release image for the app's nginx: config and static files baked in.
+# /var/www/html/uploads is a runtime volume (mounted read-only by compose).
+FROM nginx:1.27-alpine
+
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY app /var/www/html/app
+COPY assets /var/www/html/assets

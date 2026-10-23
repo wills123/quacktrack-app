@@ -1,0 +1,88 @@
+# One "color" of the release stack (blue or green), built from immutable
+# images. Each color runs as its own compose project so both can be up at
+# once, and joins quacktrack-public-net under a fixed alias
+# (quacktrack-<color>-web) so the router (docker-compose.router.yml) can
+# reach whichever one it is pointed at:
+#
+#   TAG=v2.1.0 COMMIT=$(git rev-parse --short HEAD) COLOR=blue \
+#     docker compose -p quacktrack-blue -f docker-compose.release.yml up -d --build
+#
+# Neither service publishes a host port: the router is the only public
+# entry point. For a one-off manual check of a color before it takes
+# traffic, curl its container IP directly (scripts/release.sh does this
+# for the automated health check) or `docker exec` into it.
+#
+# The database is NOT part of this file: it lives in the long-running
+# `quacktrack` project and is reached over the external quacktrack-db-net
+# network (alias quacktrack-db). Sessions live in the shared quacktrack_sessions
+# volume so users stay logged in when traffic moves between colors; create it
+# once with: docker volume create quacktrack_sessions
+services:
+  quacktrack-php:
+    image: quacktrack/php:${TAG:?set TAG to the release tag, e.g. v2.1.0}
+    container_name: quacktrack-${COLOR:?set COLOR to blue or green}-php
+    build:
+      context: .
+      dockerfile: php/Dockerfile.release
+      args:
+        VERSION: ${TAG}
+        COMMIT: ${COMMIT:-unknown}
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      APP_ENV: ${APP_ENV}
+      APP_SECRET: ${APP_SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      PHP_MEMORY_LIMIT: 256M
+      UPLOAD_MAX_FILESIZE: 100M
+      POST_MAX_SIZE: 100M
+      DB_HOST: quacktrack-db
+      DB_NAME: parts_shop
+      DB_USER: parts_user
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_SSL_CA: /etc/quacktrack/db-ca/ca.pem
+    volumes:
+      - quacktrack_sessions:/var/www/sessions
+      - quacktrack_db_ca:/etc/quacktrack/db-ca:ro
+      - ${QT_UPLOADS_DIR:-./uploads}:/var/www/uploads
+      - ${QT_LOGS_DIR:-./logs}:/var/www/logs
+    networks:
+      default: {}
+      quacktrack-db-net: {}
+      quacktrack-public-net:
+        aliases:
+          - quacktrack-${COLOR}-php
+
+  quacktrack-web:
+    image: quacktrack/web:${TAG}
+    container_name: quacktrack-${COLOR}-web
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile.release
+    restart: unless-stopped
+    volumes:
+      - ${QT_UPLOADS_DIR:-./uploads}:/var/www/html/uploads:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - quacktrack-php
+    networks:
+      default: {}
+      quacktrack-public-net:
+        aliases:
+          - quacktrack-${COLOR}-web
+
+volumes:
+  quacktrack_sessions:
+    external: true
+  # Public CA certificate, created by the shared stack's quacktrack-db-certs service
+  quacktrack_db_ca:
+    external: true
+
+networks:
+  quacktrack-db-net:
+    external: true
+  quacktrack-public-net:
+    external: true

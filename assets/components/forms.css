@@ -1,0 +1,280 @@
+/* ===== FORM COMPONENT ===== */
+
+/**
+ * Enhanced Form System
+ *
+ * Comprehensive form styling with validation states, accessibility
+ * features, and consistent visual hierarchy. Includes support for
+ * various input types and form layouts.
+ */
+
+/* Form layout components */
+.form-group {
+  margin-bottom: var(--space-lg, 1.5rem);
+  position: relative;
+}
+
+.form-row {
+  display: flex;
+  gap: var(--space-md, 1rem);
+  margin-bottom: var(--space-lg, 1.5rem);
+}
+
+.form-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Enhanced label styling */
+label {
+  display: block;
+  margin-bottom: var(--space-sm, 0.5rem);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-gray-800, #1f2937);
+  font-size: var(--font-size-sm, 0.875rem);
+  line-height: var(--line-height-normal, 1.5);
+  letter-spacing: var(--letter-spacing-normal, 0);
+}
+
+/* Required field indicator */
+label.required::after,
+label[required]::after {
+  content: ' *';
+  color: var(--color-error, #ef4444);
+  font-weight: var(--font-weight-bold, 700);
+  margin-left: var(--space-xs, 0.25rem);
+}
+
+/* Enhanced input field styling */
+input,
+select,
+textarea {
+  width: 100%;
+  padding: var(--space-md, 1rem);
+  border-radius: var(--radius-md, 0.375rem);
+  font-size: var(--font-size-base, 1rem);
+  line-height: var(--line-height-normal, 1.5);
+  font-family: var(--font-family-base, system-ui, sans-serif);
+  transition: all var(--transition-base, 0.2s ease-in-out);
+  box-shadow: var(--shadow-xs, 0 1px 2px rgb(0 0 0 / 5%));
+  margin-bottom: var(--space-sm, 0.5rem);
+  min-height: 44px;
+
+  /* Accessibility: minimum touch target */
+
+  /* Fallback for older browsers */
+  border: 2px solid #d1d5db;
+  background: #fff;
+  color: #111827;
+}
+
+/* Enhanced focus states */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-primary, #006A4E);
+  box-shadow: 0 0 0 3px rgb(0 106 78 / 15%), var(--shadow-sm, 0 1px 3px rgb(0 0 0 / 10%));
+  background-color: var(--color-white, #fff);
+  transform: translateY(-1px);
+}
+
+/* Hover states */
+input:hover:not(:focus, :disabled),
+select:hover:not(:focus, :disabled),
+textarea:hover:not(:focus, :disabled) {
+  border-color: var(--color-gray-400, #9ca3af);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgb(0 0 0 / 10%));
+  transform: translateY(-0.5px);
+}
+
+/* Disabled states */
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background-color: var(--color-gray-100, #f3f4f6);
+  border-color: var(--color-gray-200, #e5e7eb);
+  color: var(--color-gray-500, #6b7280);
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+}
+
+/* Placeholder styling */
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-gray-500, #6b7280);
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* Validation states */
+.form-group.has-error input,
+.form-group.has-error select,
+.form-group.has-error textarea,
+input.error,
+select.error,
+textarea.error {
+  border-color: var(--color-error, #ef4444);
+  background-color: var(--color-error-bg-contrast, #fee2e2);
+}
+
+.form-group.has-success input,
+.form-group.has-success select,
+.form-group.has-success textarea,
+input.success,
+select.success,
+textarea.success {
+  border-color: inherit;
+  background-color: inherit;
+}
+
+/* ===== CHECKBOX AND RADIO STYLING ===== */
+
+/**
+ * Enhanced checkbox and radio button styling with
+ * improved accessibility and visual feedback.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: 0;
+  margin-right: var(--space-sm, 0.5rem);
+  border: 2px solid var(--color-gray-400, #9ca3af);
+  background: var(--color-white, #fff);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: all var(--transition-base, 0.2s ease-in-out);
+  appearance: none;
+  min-height: 20px;
+  min-width: 20px;
+}
+
+input[type="checkbox"] {
+  border-radius: var(--radius-sm, 0.25rem);
+}
+
+input[type="radio"] {
+  border-radius: 50%;
+}
+
+/* Hover states */
+input[type="checkbox"]:hover:not(:disabled),
+input[type="radio"]:hover:not(:disabled) {
+  border-color: var(--color-primary, #006A4E);
+  transform: scale(1.05);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgb(0 0 0 / 10%));
+}
+
+/* Checked states */
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+  background-color: var(--color-primary, #006A4E);
+  border-color: var(--color-primary, #006A4E);
+  transform: none;
+}
+
+/* Checkbox checkmark - centered white checkmark on green background */
+input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 11px;
+  border: solid white;
+  border-width: 0 2.5px 2.5px 0;
+  transform: translate(-50%, -60%) rotate(45deg);
+}
+
+/* Radio button dot - centered white dot on green background */
+input[type="radio"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: white;
+  transform: translate(-50%, -50%);
+}
+
+/* Indeterminate state for "select all" checkboxes */
+input[type="checkbox"]:indeterminate {
+  background-color: var(--color-primary, #006A4E);
+  border-color: var(--color-primary, #006A4E);
+}
+
+input[type="checkbox"]:indeterminate::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 2px;
+  background: white;
+  transform: translate(-50%, -50%);
+  border: none;
+}
+
+/* Enhanced Focus states for accessibility */
+input[type="checkbox"]:focus,
+input[type="radio"]:focus {
+  outline: 2px solid var(--color-focus-ring, #2563eb);
+  outline-offset: 2px;
+  border-color: var(--color-primary, #006A4E);
+  transform: scale(1.1);
+}
+
+/* Disabled states */
+input[type="checkbox"]:disabled,
+input[type="radio"]:disabled {
+  background-color: var(--color-gray-100, #f3f4f6);
+  border-color: var(--color-gray-300, #d1d5db);
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+/* ===== FILE INPUT STYLING ===== */
+
+/**
+ * Enhanced file input styling with drag-and-drop visual cues
+ * and improved accessibility.
+ */
+
+input[type="file"] {
+  padding: var(--space-lg, 1.5rem);
+  border: 2px dashed var(--color-gray-300, #d1d5db);
+  background: var(--color-gray-50, #f9fafb);
+  cursor: pointer;
+  transition: all var(--transition-base, 0.2s ease-in-out);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+input[type="file"]:hover {
+  border-color: var(--color-primary, #006A4E);
+  background: var(--color-gray-100, #f3f4f6);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md, 0 4px 6px rgb(0 0 0 / 10%));
+}
+
+input[type="file"]:focus {
+  outline: none;
+  border-color: var(--color-primary, #006A4E);
+  box-shadow: 0 0 0 3px rgb(0 106 78 / 15%);
+  background: var(--color-white, #fff);
+}
+
+input[type="file"]:disabled {
+  border-color: var(--color-gray-200, #e5e7eb);
+  background: var(--color-gray-100, #f3f4f6);
+  cursor: not-allowed;
+  opacity: 0.6;
+}

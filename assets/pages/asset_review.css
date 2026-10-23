@@ -1,0 +1,99 @@
+/*
+ * asset_review.css — Tracked Asset Review queue.
+ * Shared shell comes from orders.css (-> stock.css); shared form pieces from
+ * asset-shared.css.
+ */
+
+.asset-review-stats { grid-template-columns: repeat(3, 1fr); }
+
+/* ---------- Pop-out: each pending scan is its own card ---------- */
+.asset-review-modal .orders-modal-body {
+  display: flex;
+  padding: 18px 24px 24px;
+  flex-direction: column;
+  gap: 18px;
+  background: var(--bg);
+  counter-reset: scan;
+}
+
+.asset-review-modal .asset-review-card {
+  flex: 0 0 auto; /* keep full height; the pop-out body scrolls instead of squashing cards */
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--brand-green);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--sh-sm);
+  overflow: hidden;
+}
+
+.asset-review-modal .asset-review-card:hover { transform: none; }
+
+.asset-scan-header { align-items: flex-start; }
+
+.asset-scan-header .order-card-identity { gap: 2px; }
+
+.asset-scan-label {
+  color: var(--text-muted);
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.asset-scan-serial {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.asset-review-modal .asset-scan-label::after {
+  counter-increment: scan;
+  content: ' ' counter(scan);
+}
+
+.asset-review-modal .asset-template-note { margin: 14px 18px 0; }
+
+.asset-link-box {
+  display: grid;
+  margin: 0 18px 16px;
+  padding: 12px 14px;
+  border: 1px dashed var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+}
+
+.asset-link-box label { display: grid; gap: 8px; color: var(--text-secondary); font-size: .8125rem; font-weight: 700; }
+
+.asset-link-row { display: flex; gap: 10px; align-items: stretch; }
+
+.asset-link-row input {
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  flex: 1;
+  font: inherit;
+  font-size: .875rem;
+  font-weight: 400;
+}
+
+.asset-link-row .orders-btn-secondary { flex-shrink: 0; }
+
+.asset-scan-actions { justify-content: space-between; gap: 12px; }
+
+.asset-scan-actions .asset-message { flex: 1; margin: 0; text-align: center; }
+
+@media (width <= 600px) {
+  .asset-review-modal .orders-modal-body { padding: 14px 14px 20px; }
+
+  .asset-link-row { flex-direction: column; }
+
+  .asset-scan-actions { flex-direction: column-reverse; align-items: stretch; }
+
+  .asset-scan-actions .asset-message { text-align: left; }
+}

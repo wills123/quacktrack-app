@@ -1,0 +1,62 @@
+# syntax=docker/dockerfile:1
+#
+# Immutable release image for PHP-FPM.
+#
+# Unlike php/Dockerfile (dev), application code and Composer dependencies are
+# baked in. Nothing in this image is bind-mounted from the host, so two
+# releases can run side by side (blue/green) without sharing code.
+# Runtime state lives in volumes: /var/www/uploads, /var/www/logs and
+# /var/www/sessions.
+ARG PHP_BASE_IMAGE=php:8.3.36-fpm-alpine
+FROM ${PHP_BASE_IMAGE}
+
+# Reject stale locally supplied base images as well as vulnerable cached tags.
+RUN php -r 'exit(PHP_VERSION_ID >= 80336 && PHP_VERSION_ID < 80400 ? 0 : 1);'
+
+RUN set -eux; \
+    apk add --no-cache \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        freetype-dev \
+        oniguruma-dev \
+        icu-dev \
+        bash \
+        zlib-dev \
+        curl-dev \
+        libzip-dev; \
+    docker-php-ext-configure gd --with-freetype --with-jpeg; \
+    docker-php-ext-install -j"$(nproc)" \
+        pdo \
+        pdo_mysql \
+        gd \
+        intl \
+        zip
+
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+COPY php/custom.ini /usr/local/etc/php/conf.d/custom.ini
+
+WORKDIR /var/www/html
+
+# Dependencies first so this layer is cached until composer.lock changes.
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-interaction --no-scripts --prefer-dist --optimize-autoloader \
+    && composer clear-cache
+
+COPY app ./app
+COPY assets ./assets
+COPY db ./db
+
+# State directories; mount volumes over these at runtime.
+RUN mkdir -p /var/www/sessions /var/www/logs /var/www/uploads \
+    && chown -R www-data:www-data /var/www/sessions /var/www/logs /var/www/uploads
+
+ARG VERSION=dev
+ARG COMMIT=unknown
+ENV QT_VERSION=${VERSION} \
+    QT_COMMIT=${COMMIT}
+
+COPY php/docker-entrypoint.release.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["php-fpm"]

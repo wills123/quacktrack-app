@@ -1,0 +1,56 @@
+parameters:
+    # Analysis level (0-9, 9 is strictest). Level 7 adds union types such as string|false;
+    # today's level-7 findings are listed in phpstan-baseline.neon, which may only shrink.
+    level: 7
+
+    # Paths to analyze
+    paths:
+        - app
+
+    # Exclude patterns
+    excludePaths:
+        - app/vendor
+        - app/cache
+        - app/logs
+
+    # Ignore errors in specific files (use sparingly)
+    ignoreErrors:
+        # Legacy code that needs refactoring can be temporarily ignored
+        # - '#Call to an undefined method#'
+        # Replaces the deprecated checkMissingIterableValueType: false option
+        -
+            identifier: missingType.iterableValue
+        # Every PDO connection is opened with ERRMODE_EXCEPTION (tests/pdo_errmode_test.php checks it),
+        # so query() and prepare() throw instead of returning false.
+        -
+            message: '#^Cannot call method [a-zA-Z]+\(\) on PDOStatement\|false\.$#'
+
+    # Check for missing type hints
+
+    # Report unknown classes
+    reportUnmatchedIgnoredErrors: true
+
+    # Custom rules for this project
+
+    # Strictness options
+    checkAlwaysTrueCheckTypeFunctionCall: true
+    checkAlwaysTrueInstanceof: true
+    checkAlwaysTrueStrictComparison: true
+    checkExplicitMixedMissingReturn: true
+    checkFunctionNameCase: true
+    checkInternalClassCaseSensitivity: true
+
+    # Additional checks
+    checkMissingCallableSignature: true
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkUninitializedProperties: true
+
+    # Universal object crates (commonly used in this project)
+    universalObjectCratesClasses:
+        - stdClass
+
+    # Treat PHP doc types as native
+    treatPhpDocTypesAsCertain: true
+
+includes:
+    - phpstan-baseline.neon

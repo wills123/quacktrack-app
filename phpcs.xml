@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<ruleset name="Quack Track Coding Standard">
+    <description>PHP CodeSniffer configuration for Quack Track</description>
+
+    <!-- Paths to check -->
+    <file>app</file>
+
+    <!-- Exclude patterns -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/logs/*</exclude-pattern>
+    <exclude-pattern>*/uploads/*</exclude-pattern>
+    <exclude-pattern>*/cache/*</exclude-pattern>
+
+    <!-- Use PSR-12 as base standard -->
+    <rule ref="PSR12">
+        <!-- Allow longer lines for readability in some cases -->
+        <exclude name="Generic.Files.LineLength"/>
+        <!-- Legacy endpoint architecture intentionally uses global symbols and
+             combines request handling with handler declarations. -->
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+        <exclude name="PSR1.Classes.ClassDeclaration.MultipleClasses"/>
+        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols"/>
+    </rule>
+
+    <!-- Security rules -->
+    <rule ref="Generic.PHP.DisallowShortOpenTag"/>
+    <rule ref="Generic.PHP.ForbiddenFunctions">
+        <properties>
+            <property name="forbiddenFunctions" type="array">
+                <!-- Dangerous functions -->
+                <element key="eval" value="null"/>
+                <element key="exec" value="null"/>
+                <element key="system" value="null"/>
+                <element key="passthru" value="null"/>
+                <element key="shell_exec" value="null"/>
+                <element key="assert" value="null"/>
+                <element key="create_function" value="null"/>
+
+                <!-- Discouraged debugging functions -->
+                <element key="var_dump" value="null"/>
+                <element key="print_r" value="null"/>
+                <element key="var_export" value="null"/>
+
+                <!-- Use htmlspecialchars instead -->
+                <element key="htmlentities" value="htmlspecialchars"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Code quality rules -->
+    <rule ref="Generic.CodeAnalysis.EmptyStatement"/>
+    <rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/>
+    <rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier"/>
+    <rule ref="Generic.CodeAnalysis.UselessOverridingMethod"/>
+
+    <!-- Best practices -->
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+    <rule ref="Generic.Commenting.Todo"/>
+    <rule ref="Generic.Commenting.Fixme"/>
+
+    <!-- Naming conventions -->
+    <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+
+    <!-- File structure -->
+    <rule ref="Generic.Files.ByteOrderMark"/>
+    <rule ref="Generic.Files.EndFileNewline"/>
+
+    <!-- Whitespace -->
+    <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
+        <properties>
+            <property name="ignoreBlankLines" value="false"/>
+        </properties>
+    </rule>
+
+    <!-- Show progress -->
+    <arg name="colors"/>
+    <arg value="sp"/>
+    <arg name="parallel" value="8"/>
+
+    <!-- Cache results for faster subsequent runs -->
+    <arg name="cache" value=".phpcs-cache"/>
+</ruleset>

@@ -1,0 +1,535 @@
+/*
+ * add-item-modal.css — Add Item to Van Stock modal v2
+ * Clean, token-driven. No hardcoded colours.
+ * Works in both light and dark mode via tokens.css.
+ */
+
+/* ============================================================
+   MODAL BACKDROP + SHELL
+   ============================================================ */
+#addItemModal {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 55%);
+  backdrop-filter: blur(3px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#addItemModal *,
+#addItemModal *::before,
+#addItemModal *::after {
+  box-sizing: border-box;
+}
+
+#addItemModal.show {
+  display: flex !important;
+}
+
+/* ── Content panel ─────────────────────────────────────────── */
+#addItemModal .modal-content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-xl);
+  max-width: 480px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden auto;
+  display: flex;
+  flex-direction: column;
+  transition: background var(--t-slow), border-color var(--t-slow);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+#addItemModal .modal-content h2,
+#addItemModal .modal-content > h2 {
+  margin: 0;
+  padding: 18px 20px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--text-primary);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  transition: background var(--t-slow), border-color var(--t-slow), color var(--t-slow);
+}
+
+/* Close button */
+#addItemModal .close-button {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-sm);
+  transition: background var(--t-fast), color var(--t-fast);
+  z-index: 1;
+}
+
+#addItemModal .close-button:hover {
+  background: var(--color-error);
+  color: #fff;
+}
+
+/* ── Form body ─────────────────────────────────────────────── */
+#addItemModal .modal-content form {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--surface);
+  transition: background var(--t-slow);
+}
+
+/* ── Form groups ───────────────────────────────────────────── */
+#addItemModal .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#addItemModal .form-group label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text-muted);
+}
+
+#addItemModal .form-group label.required::after {
+  content: ' *';
+  color: var(--color-error);
+}
+
+/* All inputs / selects */
+#addItemModal .form-group input[type="text"],
+#addItemModal .form-group input[type="number"],
+#addItemModal .form-group select,
+#addItemModal .form-group textarea {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: var(--r-sm);
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-family: inherit;
+  padding: 0 12px;
+  height: 38px;
+  outline: none;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast), background var(--t-slow), color var(--t-slow);
+  appearance: auto;
+}
+
+#addItemModal .form-group textarea {
+  height: auto;
+  padding: 10px 12px;
+  resize: vertical;
+  min-height: 72px;
+}
+
+#addItemModal .form-group input:focus,
+#addItemModal .form-group select:focus,
+#addItemModal .form-group textarea:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px rgb(0 106 78 / 12%);
+}
+
+#addItemModal .form-group input::placeholder,
+#addItemModal .form-group textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* Readonly product display field */
+#addItemModal .form-group input[readonly] {
+  background: var(--surface-2);
+  cursor: default;
+  color: var(--text-secondary);
+}
+
+/* Error state */
+#addItemModal .form-group.error input,
+#addItemModal .form-group.error select,
+#addItemModal .form-group.error textarea {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgb(248 113 113 / 15%);
+  background: var(--badge-out-bg);
+}
+
+/* Help text */
+#addItemModal .form-group .form-help {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+#addItemModal .form-group.error .form-help {
+  color: var(--color-error);
+}
+
+/* ── Product row (input + Choose + Scan) ───────────────────── */
+.aim-product-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.aim-product-row input[type="text"] {
+  flex: 1;
+  min-width: 0;
+}
+
+.aim-choose-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  height: 38px;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+}
+
+.aim-choose-btn:hover {
+  background: var(--brand-green);
+  border-color: var(--brand-green);
+  color: #fff;
+}
+
+.aim-scan-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  height: 38px;
+  background: var(--brand-yellow);
+  border: 1.5px solid var(--brand-yellow-dark);
+  border-radius: var(--r-sm);
+  color: #111827;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+
+.aim-scan-btn:hover {
+  background: var(--brand-yellow-dark);
+  transform: translateY(-1px);
+}
+
+/* ── Form actions ──────────────────────────────────────────── */
+.aim-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+  transition: border-color var(--t-slow);
+}
+
+.aim-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  height: 38px;
+  background: var(--brand-green);
+  border: none;
+  border-radius: var(--r-sm);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast), opacity var(--t-fast);
+}
+
+.aim-submit-btn:hover:not(:disabled) {
+  background: var(--brand-green-light);
+  transform: translateY(-1px);
+}
+
+.aim-submit-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Loading state */
+.aim-submit-btn.btn-loading {
+  color: transparent;
+  pointer-events: none;
+  position: relative;
+}
+
+.aim-submit-btn.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin: -8px 0 0 -8px;
+  border: 2px solid rgb(255 255 255 / 30%);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: aim-spin 0.8s linear infinite;
+}
+
+@keyframes aim-spin {
+  to { transform: rotate(360deg); }
+}
+
+.aim-cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  height: 38px;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+}
+
+.aim-cancel-btn:hover {
+  background: var(--border);
+  color: var(--text-primary);
+}
+
+/* ── Inline success/error feedback ────────────────────────── */
+.aim-feedback {
+  padding: 10px 14px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.aim-feedback.success {
+  background: var(--badge-in-bg);
+  color: var(--badge-in-text);
+  border: 1px solid var(--color-success);
+}
+
+.aim-feedback.error {
+  background: var(--badge-out-bg);
+  color: var(--badge-out-text);
+  border: 1px solid var(--color-error);
+}
+
+/* ── Product picker modal (choose product) ─────────────────── */
+#vanProductPickerModal .modal-content,
+[id$="ProductPickerModal"] .modal-content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-xl);
+  max-width: 500px;
+  width: 90vw;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: background var(--t-slow), border-color var(--t-slow);
+}
+
+#vanProductPickerModal .modal-content > h2,
+[id$="ProductPickerModal"] .modal-content > h2 {
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  flex-shrink: 0;
+  transition: background var(--t-slow), border-color var(--t-slow), color var(--t-slow);
+}
+
+/* Search field inside picker */
+#vanProductPickerModal .form-group,
+[id$="ProductPickerModal"] .form-group {
+  padding: 14px 16px 0;
+  flex-shrink: 0;
+}
+
+#vanProductPickerModal .form-group label,
+[id$="ProductPickerModal"] .form-group label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 5px;
+}
+
+#vanProductPickerModal input[type="text"],
+[id$="ProductPickerModal"] input[type="text"] {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: var(--r-sm);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+}
+
+#vanProductPickerModal input[type="text"]:focus,
+[id$="ProductPickerModal"] input[type="text"]:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px rgb(0 106 78 / 12%);
+}
+
+#vanProductPickerModal input[type="text"]::placeholder,
+[id$="ProductPickerModal"] input[type="text"]::placeholder {
+  color: var(--text-muted);
+}
+
+/* Close btn row */
+#vanProductPickerModal > .modal-content > div[style*="flex"],
+[id$="ProductPickerModal"] > .modal-content > div[style*="flex"] {
+  padding: 10px 16px 0;
+  flex-shrink: 0;
+}
+
+/* Picker list container */
+#vanPickerList,
+[id$="PickerList"] {
+  margin: 10px 16px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  overflow-y: auto;
+  max-height: calc(85vh - 180px);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  transition: background var(--t-slow), border-color var(--t-slow);
+}
+
+/* Individual picker items (rendered by JS) */
+#vanPickerList .picker-item,
+[id$="PickerList"] .picker-item,
+#vanPickerList > div,
+[id$="PickerList"] > div {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: background var(--t-fast);
+}
+
+#vanPickerList .picker-item:last-child,
+[id$="PickerList"] .picker-item:last-child,
+#vanPickerList > div:last-child,
+[id$="PickerList"] > div:last-child {
+  border-bottom: none;
+}
+
+#vanPickerList .picker-item:hover,
+[id$="PickerList"] .picker-item:hover,
+#vanPickerList > div:hover,
+[id$="PickerList"] > div:hover {
+  background: var(--table-hover);
+}
+
+.picker-item-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.picker-item-sku {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin-top: 2px;
+}
+
+/* Loading / empty states inside picker */
+.picker-loading,
+.picker-empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ============================================================
+   BODY SCROLL LOCK
+   ============================================================ */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (width <= 560px) {
+  #addItemModal {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  #addItemModal .modal-content {
+    max-height: 95vh;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    max-width: 100%;
+  }
+
+  .aim-product-row {
+    flex-wrap: wrap;
+  }
+
+  .aim-product-row input[type="text"] {
+    width: 100%;
+    flex: none;
+  }
+
+  .aim-actions {
+    flex-direction: column-reverse;
+  }
+
+  .aim-submit-btn,
+  .aim-cancel-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

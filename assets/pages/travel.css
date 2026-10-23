@@ -1,0 +1,806 @@
+/*
+ * travel.css — Travel Spots page
+ * Imports stock.css for shared layout (masthead, stat strip, sidebar, stock-layout).
+ */
+
+/* ============================================================
+   STATUS MESSAGE
+   ============================================================ */
+.travel-message {
+  min-height: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0 24px;
+  margin-top: -4px;
+}
+
+.travel-message:not(:empty) {
+  padding: 8px 24px;
+}
+
+.travel-message.is-success { color: var(--badge-in-text, #166534); }
+
+.travel-message.is-error   { color: var(--badge-out-text, #991b1b); }
+
+/* ============================================================
+   SIDEBAR — region notes section
+   ============================================================ */
+.travel-sidebar-section-title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text-muted, #9ca3af);
+  margin: 0 0 10px;
+}
+
+.travel-region-notes-panel {
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle, #f1f5f9);
+  margin-top: 4px;
+}
+
+.travel-region-notes-panel textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 80px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--input-border, #d1d5db);
+  border-radius: var(--r-xs, 6px);
+  background: var(--input-bg, #fff);
+  color: var(--text-primary, #111827);
+  font-size: 0.8125rem;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: border-color var(--t-fast, .12s), box-shadow var(--t-fast, .12s);
+  box-sizing: border-box;
+}
+
+.travel-region-notes-panel textarea:focus {
+  outline: none;
+  border-color: var(--brand-green, #006A4E);
+  box-shadow: 0 0 0 3px rgb(0 106 78 / 12%);
+}
+
+.travel-region-notes-panel textarea:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ============================================================
+   SHARED BUTTON PRIMITIVES
+   ============================================================ */
+.travel-btn-primary,
+.travel-btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--t-fast, .12s), color var(--t-fast, .12s), border-color var(--t-fast, .12s);
+  white-space: nowrap;
+  padding: 0 !important;
+  min-height: unset !important;
+  border: none;
+  background: none;
+}
+
+.travel-btn-primary {
+  padding: 9px 18px !important;
+  background: var(--brand-green, #006A4E);
+  color: #fff;
+  border-radius: var(--r-sm, 8px);
+  border: none;
+}
+
+.travel-btn-primary:hover {
+  background: var(--brand-green-dark, #004d38);
+}
+
+.travel-btn-primary:disabled {
+  background: var(--border, #d1d5db);
+  color: var(--text-muted, #9ca3af);
+  cursor: not-allowed;
+}
+
+.travel-btn-link {
+  color: var(--brand-green, #006A4E);
+  text-decoration: none;
+}
+
+.travel-btn-link:hover { color: var(--brand-green-dark, #004d38); text-decoration: underline; }
+
+/* ============================================================
+   ADD / EDIT PLACE FORM CARD
+   ============================================================ */
+.travel-form-card {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--r-md, 12px);
+  box-shadow: var(--sh-xs, 0 1px 3px rgb(0 0 0 / 6%));
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.travel-form-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-subtle, #f1f5f9);
+  background: var(--surface-2, #f8fafc);
+}
+
+.travel-form-card-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+  margin: 0;
+  letter-spacing: -.01em;
+}
+
+/* ============================================================
+   FORM FIELDS
+   ============================================================ */
+.travel-form {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.travel-form-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.travel-form-row--top {
+  align-items: flex-start;
+}
+
+.travel-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.travel-form-group--checkbox {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  padding-bottom: 2px;
+}
+
+.travel-form-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary, #374151);
+}
+
+.travel-required { color: var(--color-error, #ef4444); margin-left: 1px; }
+
+.travel-form-hint-inline {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-muted, #9ca3af);
+}
+
+.travel-form-input,
+.travel-form-select {
+  padding: 8px 10px;
+  border: 1.5px solid var(--input-border, #d1d5db);
+  border-radius: var(--r-xs, 6px);
+  background: var(--input-bg, #fff);
+  color: var(--text-primary, #111827);
+  font-size: 0.875rem;
+  font-family: inherit;
+  transition: border-color var(--t-fast, .12s), box-shadow var(--t-fast, .12s);
+  appearance: none;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.travel-form-input:focus,
+.travel-form-select:focus {
+  outline: none;
+  border-color: var(--brand-green, #006A4E);
+  box-shadow: 0 0 0 3px rgb(0 106 78 / 12%);
+}
+
+.travel-form-textarea {
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.5;
+}
+
+/* Hide the raw file input — it's triggered via the upload zone label */
+.travel-form-file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Styled clickable upload zone */
+.travel-photo-upload-zone {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border: 1.5px dashed var(--input-border, #d1d5db);
+  border-radius: var(--r-xs, 6px);
+  background: var(--surface-2, #f8fafc);
+  color: var(--text-secondary, #374151);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color var(--t-fast, .12s), background var(--t-fast, .12s), color var(--t-fast, .12s);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.travel-photo-upload-zone:hover {
+  border-color: var(--brand-green, #006A4E);
+  background: var(--surface, #fff);
+  color: var(--brand-green, #006A4E);
+}
+
+.travel-photo-upload-zone svg {
+  flex-shrink: 0;
+  opacity: .7;
+}
+
+/* Remove current photo row */
+.travel-remove-photo-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted, #6b7280);
+  cursor: pointer;
+}
+
+.travel-form-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted, #9ca3af);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.travel-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary, #374151);
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.travel-checkbox-label input[type="checkbox"] {
+  width: 15px !important;
+  height: 15px !important;
+  min-width: 15px !important;
+  min-height: 15px !important;
+  margin: 0 !important;
+  flex-shrink: 0;
+  accent-color: var(--brand-green, #006A4E);
+}
+
+/* Normalised checkbox — overrides global input styles that bloat it */
+.travel-check {
+  width: 15px !important;
+  height: 15px !important;
+  min-width: 15px !important;
+  min-height: 15px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  flex-shrink: 0;
+  accent-color: var(--brand-green, #006A4E);
+  cursor: pointer;
+}
+
+.travel-remove-photo { font-size: 0.8125rem; padding: 4px 0; }
+
+.travel-photo-preview {
+  margin-top: 4px;
+  border-radius: var(--r-xs, 6px);
+  overflow: hidden;
+  border: 1px solid var(--border, #e2e8f0);
+  background: var(--surface-2, #f8fafc);
+  padding: 3px;
+  max-width: 110px;
+}
+
+.travel-photo-preview img {
+  display: block;
+  width: 100%;
+  border-radius: 4px;
+}
+
+.travel-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border-subtle, #f1f5f9);
+  margin-top: 2px;
+}
+
+/* Visited chip — pill-style toggle in form footer */
+.travel-visited-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border, #e2e8f0);
+  background: var(--surface-2, #f8fafc);
+  color: var(--text-secondary, #374151);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color var(--t-fast, .12s), background var(--t-fast, .12s), color var(--t-fast, .12s);
+}
+
+.travel-visited-chip:hover {
+  border-color: var(--brand-green, #006A4E);
+  color: var(--brand-green, #006A4E);
+}
+
+/* When the hidden checkbox inside is checked, style the chip as active */
+.travel-visited-chip:has(input:checked) {
+  background: var(--badge-in-bg, #dcfce7);
+  border-color: var(--brand-green, #006A4E);
+  color: var(--badge-in-text, #166534);
+}
+
+.travel-visited-chip-icon {
+  flex-shrink: 0;
+  opacity: .5;
+}
+
+.travel-visited-chip:has(input:checked) .travel-visited-chip-icon {
+  opacity: 1;
+}
+
+/* ============================================================
+   RESULTS HEADER
+   ============================================================ */
+.travel-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.travel-results-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+  margin: 0;
+  letter-spacing: -.01em;
+}
+
+.travel-results-meta {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-muted, #9ca3af);
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.travel-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 52px 24px;
+  background: var(--surface, #fff);
+  border: 1.5px dashed var(--border, #e2e8f0);
+  border-radius: var(--r-md, 12px);
+  gap: 6px;
+}
+
+.travel-empty-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--text-muted, #9ca3af);
+  margin-bottom: 8px;
+}
+
+.travel-empty-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+  margin: 0;
+}
+
+.travel-empty-text {
+  font-size: 0.875rem;
+  color: var(--text-muted, #6b7280);
+  margin: 0;
+}
+
+/* ============================================================
+   PLACE CARDS  (built dynamically by travel.js — keep class names)
+   ============================================================ */
+.travel-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.travel-card {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--r-md, 12px);
+  box-shadow: var(--sh-xs, 0 1px 3px rgb(0 0 0 / 6%));
+  overflow: hidden;
+  transition: border-color var(--t-fast, .12s), box-shadow var(--t-fast, .12s), transform var(--t-fast, .12s);
+}
+
+.travel-card:hover {
+  border-color: var(--brand-green, #006A4E);
+  box-shadow: var(--sh-sm, 0 4px 12px rgb(0 0 0 / 8%));
+  transform: translateY(-1px);
+}
+
+.travel-card-main {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 14px;
+  padding: 14px 18px;
+}
+
+.travel-card-photo {
+  border-radius: var(--r-sm, 8px);
+  background: var(--surface-2, #f8fafc);
+  border: 1px solid var(--border, #e2e8f0);
+  min-height: 80px;
+  max-height: 100px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.travel-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.travel-photo-fallback {
+  font-size: 0.7rem;
+  color: var(--text-muted, #9ca3af);
+  font-weight: 500;
+  text-align: center;
+  padding: 4px;
+}
+
+.travel-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.travel-card-header h3 {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+  letter-spacing: -.01em;
+}
+
+/* ============================================================
+   BADGES  (used by travel.js dynamic rendering)
+   ============================================================ */
+.travel-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  line-height: 1.5;
+}
+
+.travel-badge.recommended {
+  background: var(--badge-in-bg, #dcfce7);
+  color: var(--badge-in-text, #166534);
+}
+
+.travel-badge.avoid {
+  background: var(--badge-out-bg, #fee2e2);
+  color: var(--badge-out-text, #991b1b);
+}
+
+.travel-badge.visited {
+  background: var(--badge-info-bg, #dbeafe);
+  color: var(--badge-info-text, #1e40af);
+}
+
+/* ============================================================
+   CARD BODY  (meta, tags, description, actions)
+   ============================================================ */
+.travel-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted, #6b7280);
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+.travel-rating-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.travel-card-description {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #374151);
+  margin: 4px 0;
+  line-height: 1.5;
+}
+
+.travel-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.travel-tag {
+  background: var(--surface-2, #f8fafc);
+  color: var(--text-secondary, #374151);
+  border: 1px solid var(--border, #e2e8f0);
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  transition: background var(--t-fast, .12s);
+}
+
+.travel-tag:hover {
+  background: var(--border, #e2e8f0);
+}
+
+.travel-card-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+/* Override global btn styles in card context */
+.travel-card-actions .btn {
+  padding: 5px 12px !important;
+  min-height: unset !important;
+  font-size: 0.78rem !important;
+  border-radius: var(--r-xs, 6px);
+}
+
+.travel-card-actions .btn-danger {
+  background: transparent !important;
+  color: var(--color-error, #ef4444) !important;
+  border-color: var(--color-error, #ef4444) !important;
+}
+
+.travel-card-actions .btn-danger:hover {
+  background: var(--badge-out-bg, #fee2e2) !important;
+}
+
+/* ============================================================
+   COMMENTS SECTION  (toggled by travel.js)
+   ============================================================ */
+.travel-comments {
+  border-top: 1px solid var(--border, #e2e8f0);
+  padding: 14px 18px;
+  background: var(--surface-2, #f8fafc);
+}
+
+.travel-comments-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.875rem;
+}
+
+.travel-comments-header strong {
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+}
+
+.travel-region-notes-preview {
+  font-size: 0.75rem;
+  color: var(--text-muted, #9ca3af);
+  font-style: italic;
+}
+
+.travel-comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.travel-comment {
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--r-sm, 8px);
+  padding: 10px 14px;
+  background: var(--surface, #fff);
+}
+
+.travel-comment-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--text-muted, #9ca3af);
+  margin-bottom: 2px;
+}
+
+.travel-comment-meta strong { color: var(--text-secondary, #374151); }
+
+.travel-comment-rating {
+  font-size: 0.75rem;
+  color: var(--text-muted, #9ca3af);
+  margin-bottom: 2px;
+}
+
+.travel-comment-body {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #374151);
+  margin: 4px 0;
+  line-height: 1.5;
+}
+
+.travel-comment-actions {
+  display: flex;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.travel-comment-actions .btn {
+  padding: 3px 10px !important;
+  min-height: unset !important;
+  font-size: 0.72rem !important;
+  border-radius: var(--r-xs, 6px);
+}
+
+.travel-comment-actions .btn-danger {
+  background: transparent !important;
+  color: var(--color-error, #ef4444) !important;
+  border-color: var(--color-error, #ef4444) !important;
+}
+
+.travel-comment-actions .btn-danger:hover {
+  background: var(--badge-out-bg, #fee2e2) !important;
+}
+
+/* Comment form */
+.travel-comment-form,
+.travel-comment-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle, #f1f5f9);
+}
+
+.travel-comment-form label,
+.travel-comment-edit label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary, #374151);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.travel-comment-form .form-control,
+.travel-comment-edit .form-control {
+  padding: 7px 9px;
+  border: 1.5px solid var(--input-border, #d1d5db);
+  border-radius: var(--r-xs, 6px);
+  background: var(--input-bg, #fff);
+  color: var(--text-primary, #111827);
+  font-size: 0.8125rem;
+  font-family: inherit;
+  transition: border-color var(--t-fast, .12s);
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+}
+
+.travel-comment-form select.form-control { max-width: 140px; }
+
+.travel-comment-form textarea.form-control,
+.travel-comment-edit textarea.form-control {
+  resize: vertical;
+  min-height: 60px;
+  line-height: 1.5;
+}
+
+.travel-comment-form .form-control:focus,
+.travel-comment-edit .form-control:focus {
+  outline: none;
+  border-color: var(--brand-green, #006A4E);
+  box-shadow: 0 0 0 3px rgb(0 106 78 / 12%);
+}
+
+.travel-comment-form .btn,
+.travel-comment-edit .btn {
+  align-self: flex-start;
+  padding: 7px 14px !important;
+  min-height: unset !important;
+  font-size: 0.8125rem !important;
+  border-radius: var(--r-xs, 6px);
+}
+
+.travel-character-count {
+  font-size: 0.7rem;
+  color: var(--text-muted, #9ca3af);
+  text-align: right;
+  margin-top: -4px;
+}
+
+.travel-empty {
+  font-size: 0.875rem;
+  color: var(--text-muted, #9ca3af);
+  font-style: italic;
+  padding: 6px 0;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (width <= 1024px) {
+  .travel-card-main { grid-template-columns: 80px 1fr; }
+}
+
+@media (width <= 768px) {
+  .travel-form-row { flex-direction: column; gap: 10px; }
+
+  .travel-form-row--top { align-items: stretch; }
+
+  .travel-form-group { flex: 1 1 auto; }
+
+  .travel-form-group--checkbox { padding-bottom: 0; padding-top: 2px; }
+
+  .travel-form-footer { flex-wrap: wrap; }
+
+  .travel-card-main { grid-template-columns: 1fr; }
+
+  .travel-card-photo { max-height: 160px; max-width: 160px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .travel-card,
+  .travel-btn-primary { transition: none; }
+}

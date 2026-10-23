@@ -1,0 +1,77 @@
+/* ===== TABLE COMPONENT ===== */
+
+/**
+ * Enhanced Table System
+ *
+ * Responsive table design with improved readability, hover effects,
+ * and accessibility features. Includes zebra striping and mobile
+ * responsive patterns.
+ */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-lg, 1.5rem);
+  background: var(--color-white, #fff);
+  border-radius: var(--radius-lg, 0.5rem);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm, 0 1px 3px rgb(0 0 0 / 10%));
+
+  /* Fallback for older browsers */
+  border: 1px solid #e5e7eb;
+}
+
+.table th {
+  background: var(--color-primary, #006A4E);
+  color: var(--on-brand, #fff);
+  font-weight: var(--font-weight-bold, 700);
+  text-align: left;
+  padding: var(--space-md, 1rem) var(--space-lg, 1.5rem);
+  font-size: var(--font-size-sm, 0.875rem);
+  letter-spacing: var(--letter-spacing-wide, 0.025em);
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--color-primary-dark, #004d38);
+}
+
+.table td {
+  padding: var(--space-md, 1rem) var(--space-lg, 1.5rem);
+  border-bottom: 1px solid var(--color-gray-200, #e5e7eb);
+  color: var(--color-gray-900, #111827);
+  font-size: var(--font-size-sm, 0.875rem);
+  line-height: var(--line-height-normal, 1.5);
+}
+
+/* Zebra striping for better readability */
+.table tbody tr:nth-child(even) {
+  background-color: var(--color-gray-25, #fafafa);
+}
+
+/* Enhanced hover effects */
+.table tbody tr:hover {
+  background-color: rgb(0 106 78 / 5%);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgb(0 0 0 / 10%));
+  transition: all var(--transition-fast, 0.15s ease-in-out);
+}
+
+/* Focus states for accessibility */
+.table tbody tr:focus-within {
+  outline: 2px solid var(--color-focus-ring, #2563eb);
+  outline-offset: 2px;
+  background-color: rgb(37 99 235 / 5%);
+}
+
+/* Table action buttons */
+.table .btn {
+  padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
+  font-size: var(--font-size-xs, 0.75rem);
+  min-height: 32px;
+}
+
+/* Responsive table wrapper */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-lg, 0.5rem);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgb(0 0 0 / 10%));
+}

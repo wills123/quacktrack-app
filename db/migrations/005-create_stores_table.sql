@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS stores (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(190) NOT NULL UNIQUE,
+  address TEXT,
+  contact_info VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO stores (id, name) VALUES (1, 'Unallocated');

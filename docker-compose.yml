@@ -1,0 +1,112 @@
+
+services:
+  quacktrack-nginx:
+    restart: unless-stopped
+    image: nginx:1.27-alpine
+    ports:
+      - "8081:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./:/var/www/html:ro
+      - ./uploads:/var/www/uploads:ro
+    depends_on:
+      - quacktrack-php
+      - quacktrack-db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - quacktrack-net
+##      - shared-network
+
+  quacktrack-php:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: php/Dockerfile
+    env_file:
+      - ./.env
+    environment:
+      APP_ENV: ${APP_ENV}
+      APP_SECRET: ${APP_SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      PHP_MEMORY_LIMIT: 256M
+      UPLOAD_MAX_FILESIZE: 100M
+      POST_MAX_SIZE: 100M
+      DB_HOST: quacktrack-db
+      DB_NAME: parts_shop
+      DB_USER: parts_user
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_SSL_CA: /etc/quacktrack/db-ca/ca.pem
+    volumes:
+      - ./:/var/www/html
+      - quacktrack_db_ca:/etc/quacktrack/db-ca:ro
+      - quacktrack_vendor_data:/var/www/html/vendor
+      - ./assets:/var/www/assets:ro
+      - ./uploads:/var/www/uploads
+      - ./logs:/var/www/logs
+      - ./db/init:/var/www/html/db/init:ro
+      - ./db/migrations:/var/www/html/db/migrations:ro
+    depends_on:
+      - quacktrack-db
+    networks:
+      - quacktrack-net
+      - quacktrack-db-net
+
+  # One-shot: creates the CA and the database's TLS certificate (see docker/mysql/init-certs.sh).
+  quacktrack-db-certs:
+    image: mysql:8.0
+    restart: "no"
+    entrypoint: ["/bin/sh", "/init-certs.sh"]
+    environment:
+      DB_TLS_NAMES: ${DB_TLS_NAMES:-quacktrack-db db localhost}
+    volumes:
+      - ./docker/mysql/init-certs.sh:/init-certs.sh:ro
+      - quacktrack_db_tls_ca:/ca-private
+      - quacktrack_db_tls:/tls
+      - quacktrack_db_ca:/ca
+
+  quacktrack-db:
+    restart: unless-stopped
+    image: mysql:8.0
+    env_file:
+      - ./.env
+    depends_on:
+      quacktrack-db-certs:
+        condition: service_completed_successfully
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      # root may only log in from inside this container (backups, release.sh), never over the network
+      MYSQL_ROOT_HOST: localhost
+      MYSQL_DATABASE: parts_shop
+      MYSQL_USER: parts_user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - quacktrack_db_data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+      - ./docker/mysql/tls.cnf:/etc/mysql/conf.d/tls.cnf:ro
+      - ${DB_REQUIRE_TLS_CNF:-./docker/mysql/require-tls.cnf}:/etc/mysql/conf.d/require-tls.cnf:ro
+      - quacktrack_db_tls:/etc/mysql/tls:ro
+    networks:
+      - quacktrack-net
+      - quacktrack-db-net
+
+volumes:
+  quacktrack_db_data:
+    name: quacktrack_db_data
+  # Database TLS material, one volume per audience (see docker/mysql/init-certs.sh)
+  quacktrack_db_tls_ca:
+    name: quacktrack_db_tls_ca
+  quacktrack_db_tls:
+    name: quacktrack_db_tls
+  quacktrack_db_ca:
+    name: quacktrack_db_ca
+  quacktrack_vendor_data:
+
+networks:
+  quacktrack-net:
+    driver: bridge
+  quacktrack-db-net:
+    name: quacktrack-db-net
+##  shared-network:
+##    external: true

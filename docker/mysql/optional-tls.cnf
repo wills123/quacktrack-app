@@ -1,0 +1,4 @@
+# Temporary stand-in for require-tls.cnf during a staged rollout, while some clients (an older
+# release still serving traffic) cannot use TLS yet. Select it with DB_REQUIRE_TLS_CNF in .env,
+# and remove that setting once every client connects over TLS. See doc/operations/DATABASE_SECURITY.md.
+[mysqld]

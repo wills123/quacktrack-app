@@ -1,0 +1,28 @@
+# The blue/green router: the one long-lived, publicly-published stack.
+# Bootstrapped once (scripts/release.sh does this automatically on first
+# run) and then left running across every release; only the file at
+# QT_ROUTER_STATE_DIR/active-upstream.conf changes on a deploy.
+#
+#   docker network create quacktrack-public-net   # once
+#   ROUTER_PORT=8091 QT_ROUTER_STATE_DIR=./router-state \
+#     docker compose -p quacktrack-router -f docker-compose.router.yml up -d --build
+services:
+  quacktrack-router:
+    image: quacktrack/router:latest
+    build:
+      context: .
+      dockerfile: router/Dockerfile
+    container_name: quacktrack-router
+    restart: unless-stopped
+    ports:
+      - "${ROUTER_PORT:-8081}:80"
+    volumes:
+      - ${QT_ROUTER_STATE_DIR:-./router-state}:/etc/nginx/state:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - quacktrack-public-net
+
+networks:
+  quacktrack-public-net:
+    external: true

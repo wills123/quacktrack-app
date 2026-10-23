@@ -1,0 +1,7 @@
+/*
+ * asset_templates.css — Snipe-IT Asset Templates.
+ * Shared shell comes from orders.css (-> stock.css); shared form pieces from
+ * asset-shared.css.
+ */
+
+.asset-templates-stats { grid-template-columns: repeat(3, 1fr); }

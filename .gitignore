@@ -1,0 +1,69 @@
+# Environment and sensitive files
+/.env
+docker-compose.override.yml
+/.env.*
+!/.env.example
+*.key
+*.pub
+*.pem
+*.pfx
+*.p12
+*.crt
+*.cer
+**/github-actions-key
+**/github-actions-key.pub
+
+# Runtime data
+/uploads
+/app/backups
+/logs
+/backups
+/backups/**
+
+# Local agent artifacts
+/.code
+/.code/**
+
+# VSCode settings
+.vscode/settings.json
+
+# Claude Code local settings
+.claude/settings.local.json
+.claude/
+.kiro/
+
+# Security and testing
+pentest_results.json
+**/pentest_results.json
+
+# Code review and quality tools
+/vendor
+/node_modules
+/.phpcs-cache
+/.phpstan-cache
+/phpcs-report.xml
+/npm-debug.log*
+/yarn-debug.log*
+/yarn-error.log*
+/.eslintcache
+/.stylelintcache
+/coverage
+/.nyc_output
+
+# Internal-only docs and reports (contain secrets)
+/docs
+/reports
+/security-testing
+
+# Internal-only planning docs
+/AGENTS.md
+/CLAUDE.md
+/TODO.md
+/CSS_REORGANIZATION_PLAN.md
+/CSS_CLEANUP_PLAN.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+__pycache__/

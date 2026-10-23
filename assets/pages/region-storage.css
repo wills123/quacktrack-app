@@ -1,0 +1,101 @@
+/*
+ * region-storage.css — Region Storage page
+ * Imports all stock layout/card/masthead styles from stock.css.
+ * Only region-storage-specific overrides below.
+ */
+
+/* ============================================================
+   REGION SELECTOR — inside filters sidebar
+   Ghost select styled to match sidebar context
+   ============================================================ */
+#filtersSidebar #regionSelector {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: var(--r-sm, 5px);
+  border: 1px solid var(--input-border, #cbd5e1);
+  background: var(--input-bg, #fff);
+  color: var(--text-primary, #0f172a);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color var(--t-fast, .12s);
+}
+
+#filtersSidebar #regionSelector:hover {
+  border-color: var(--brand-green);
+}
+
+#filtersSidebar #regionSelector:focus {
+  outline: none;
+  border-color: var(--input-focus, #006A4E);
+  box-shadow: 0 0 0 3px rgb(0 106 78 / 12%);
+}
+
+/* ============================================================
+   CARD ACTION BUTTON ORDER OVERRIDE
+   Transfer is primary (first) on region-storage cards
+   ============================================================ */
+.stock-card-actions .transfer-btn {
+  order: -1;
+  background: var(--brand-yellow);
+  border-color: var(--brand-yellow-dark);
+  color: #111827;
+  font-weight: 700;
+}
+
+.stock-card-actions .transfer-btn:hover {
+  background: #ffe566;
+  transform: translateY(-1px);
+}
+
+.stock-card-actions .transfer-btn:active {
+  transform: translateY(0);
+}
+
+/* ============================================================
+   ADD STOCK PRODUCT PICKER ROW
+   ============================================================ */
+.add-stock-product-row {
+  display: flex;
+  gap: var(--space-sm, 0.5rem);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.add-stock-product-display {
+  flex: 1;
+  min-width: 200px;
+}
+
+#addStockModal #openProductPickerBtn,
+#addStockModal #openRegionScannerBtnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  min-height: 44px;
+  min-width: 120px;
+  border-radius: var(--r-sm, 5px);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* ============================================================
+   RESPONSIVE OVERRIDES
+   ============================================================ */
+@media (width <= 768px) {
+  .add-stock-product-display { min-width: 150px; }
+
+  #addStockModal #openProductPickerBtn,
+  #addStockModal #openRegionScannerBtnPrimary { min-width: 100px; padding: 8px 12px; }
+}
+
+@media (width <= 480px) {
+  .add-stock-product-row { flex-direction: column; align-items: stretch; }
+
+  .add-stock-product-display { min-width: 100%; width: 100%; }
+
+  #addStockModal #openProductPickerBtn,
+  #addStockModal #openRegionScannerBtnPrimary { width: 100%; min-width: auto; }
+}

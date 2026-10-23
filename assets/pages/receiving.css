@@ -1,0 +1,172 @@
+/*
+ * receiving.css — Receiving Inbox page styles.
+ * Imports orders.css (which itself imports stock.css) for the shared masthead,
+ * stat strip, order cards, buttons and empty state, so this page matches
+ * Orders and Van Stock. Only receiving-specific pieces live here.
+ */
+
+.receiving-stats { grid-template-columns: repeat(3, 1fr); }
+
+.receiving-body {
+  width: 100%;
+  padding: 16px 24px 60px;
+}
+
+.receiving-card-footer { flex-wrap: wrap; }
+
+/* Keep product thumbnails a fixed, small size. */
+.receiving-modal .orders-item-img {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  max-width: 56px;
+  max-height: 56px;
+  flex: 0 0 56px;
+  object-fit: cover;
+}
+
+.tracked-unit-hint { margin: 6px 0 0; color: var(--text-secondary); font-size: .8125rem; font-weight: 600; }
+
+.receiving-dialog-field {
+  display: grid;
+  gap: 5px;
+  margin-top: 4px;
+  color: var(--text-secondary);
+  font-size: .8125rem;
+  font-weight: 600;
+}
+
+.receiving-dialog-field[hidden] { display: none; }
+
+.receiving-dialog-field input {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font: inherit;
+  font-weight: 400;
+}
+
+/* In-page confirm dialog (replaces window.confirm / window.alert) */
+.receiving-dialog {
+  width: min(28rem, calc(100vw - 2rem));
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: var(--sh-lg, 0 12px 32px rgb(0 0 0 / 25%));
+}
+
+.receiving-dialog::backdrop { background: rgb(0 0 0 / 50%); }
+
+.receiving-dialog-body { padding: 20px 22px; }
+
+.receiving-dialog h2 { margin: 0 0 8px; font-size: 1.125rem; }
+
+.receiving-dialog p { margin: 0; color: var(--text-secondary); line-height: 1.5; }
+
+.receiving-dialog-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+
+@media (width <= 768px) {
+  .receiving-body { padding: 14px 16px 60px; }
+}
+
+@media (width <= 600px) {
+  .receiving-stats { grid-template-columns: repeat(3, 1fr); }
+
+  .receiving-dialog-actions { flex-direction: column-reverse; }
+
+  .receiving-dialog-actions > * { width: 100%; }
+}
+
+/* Inline "add to Snipe-IT" form inside a tracked-asset box */
+.asset-add-form {
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px dashed var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+}
+
+.asset-add-form .asset-form { padding: 0; }
+
+.asset-add-title { margin: 0 0 10px; color: var(--text-secondary); font-size: .8125rem; font-weight: 600; }
+
+.asset-add-actions { display: flex; gap: 10px; margin-top: 12px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
+
+/* ---------- Order pop-out ---------- */
+.receiving-modal .orders-modal-box { max-width: 760px; }
+
+.receiving-modal-message {
+  margin: 12px 24px 0;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  font-size: .875rem;
+  line-height: 1.45;
+}
+
+.receiving-modal-message[hidden] { display: none; }
+
+.receiving-modal-message--success {
+  border-color: var(--badge-in-text, #166534);
+  background: var(--badge-in-bg, #dcfce7);
+  color: var(--badge-in-text, #166534);
+}
+
+.receiving-modal-message--error {
+  border-color: var(--badge-out-text, #b91c1c);
+  background: var(--badge-out-bg, #fef2f2);
+  color: var(--badge-out-text, #b91c1c);
+}
+
+#receivingModalCancelOrder { margin-right: auto; }
+
+#receivingModalCancelOrder[hidden] { display: none; }
+
+.rm-summary { padding: 0 0 8px; margin-bottom: 8px; }
+
+.rm-section { margin-top: 18px; }
+
+.rm-section-title {
+  margin: 0 0 8px;
+  color: var(--text-muted);
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.rm-receive { display: grid; gap: 10px; margin-top: 12px; }
+
+.rm-done { margin: 12px 0 0; color: var(--badge-in-text, #166534); font-size: .875rem; font-weight: 700; }
+
+.rm-hint { margin: 12px 0 0; color: var(--text-muted); font-size: .8125rem; line-height: 1.45; }
+
+/* The camera scanner is a shared .modal; keep it above this pop-out (z-index 9999). */
+#trackedAssetScannerModal { z-index: 10050; }
+
+@media (width <= 600px) {
+  .receiving-modal .orders-modal-box {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+  }
+
+  .receiving-modal .orders-modal-header { padding: 14px 16px 12px; }
+
+  .receiving-modal .orders-modal-body { padding: 14px 16px 18px; }
+
+  .receiving-modal-message { margin: 10px 16px 0; }
+
+  .rm-receive .orders-btn-primary { width: 100%; }
+}

@@ -1,0 +1,7 @@
+# Offer encrypted connections, using the private CA made by init-certs.sh. Whether plain-text
+# connections are also refused is decided by require-tls.cnf (see doc/operations/DATABASE_SECURITY.md).
+[mysqld]
+ssl_ca=/etc/mysql/tls/ca.pem
+ssl_cert=/etc/mysql/tls/server-cert.pem
+ssl_key=/etc/mysql/tls/server-key.pem
+tls_version=TLSv1.2,TLSv1.3

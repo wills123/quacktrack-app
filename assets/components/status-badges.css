@@ -1,0 +1,33 @@
+/* Shared order and inventory status indicators. */
+.qt-status-badge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: var(--r-full);
+  align-items: center;
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.qt-status-badge-draft,
+.qt-status-badge-partial {
+  background: var(--badge-low-bg);
+  color: var(--badge-low-text);
+}
+
+.qt-status-badge-sent {
+  background: var(--badge-info-bg);
+  color: var(--badge-info-text);
+}
+
+.qt-status-badge-received {
+  background: var(--badge-in-bg);
+  color: var(--badge-in-text);
+}
+
+.qt-status-badge-cancelled {
+  background: var(--badge-out-bg);
+  color: var(--badge-out-text);
+}

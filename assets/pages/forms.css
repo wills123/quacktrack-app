@@ -1,0 +1,239 @@
+/*
+ * forms.css — Forms page styles (Operational Dashboard spec)
+ * Depends on: opdash.css (loaded via extra_styles in forms.php)
+ */
+
+/* ── Question cards ───────────────────────────────────────── */
+.frm-q-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.frm-q-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: var(--od-card-bg);
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius);
+  padding: 0.75rem 1rem;
+  transition: background 0.1s;
+}
+
+.frm-q-card:hover { background: var(--od-row-hover); }
+
+.frm-q-num {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: var(--od-green);
+  color: #fff;
+  border-radius: var(--od-radius);
+  font-size: 0.75rem;
+  font-weight: 800;
+  font-family: var(--od-mono);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.1rem;
+}
+
+.frm-q-body { flex: 1; min-width: 0; }
+
+.frm-q-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--od-text);
+  line-height: 1.35;
+  margin-bottom: 0.25rem;
+}
+
+.frm-q-help {
+  font-size: 0.8125rem;
+  color: var(--od-muted);
+  margin-bottom: 0.375rem;
+}
+
+.frm-q-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+}
+
+.frm-q-actions {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  align-items: flex-start;
+  padding-top: 0.1rem;
+}
+
+/* ── Question editor panel ────────────────────────────────── */
+.frm-editor {
+  background: var(--od-card-bg);
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+
+/* ── Options drag list ────────────────────────────────────── */
+.frm-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-bottom: 0.5rem;
+}
+
+.frm-option-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--od-mist);
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius);
+  padding: 0.3125rem 0.5rem;
+}
+
+.frm-option-row.is-dragging { opacity: 0.5; }
+
+.frm-option-row--empty { opacity: 0.6; }
+
+.frm-option-drag {
+  cursor: grab;
+  color: var(--od-muted);
+  background: none;
+  border: none;
+  font-size: 1rem;
+  padding: 0 0.25rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.frm-option-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 0.875rem;
+  color: var(--od-text);
+  outline: none;
+  min-width: 0;
+  padding: 0.125rem 0;
+  font-family: inherit;
+}
+
+.frm-option-remove {
+  background: none;
+  border: none;
+  color: var(--od-muted);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.3rem;
+  border-radius: var(--od-radius);
+  transition: color 0.1s, background 0.1s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.frm-option-remove:hover { color: var(--color-error); background: var(--badge-out-bg); }
+
+.frm-option-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.frm-option-count {
+  font-size: 0.75rem;
+  color: var(--od-muted);
+}
+
+.frm-option-error {
+  font-size: 0.75rem;
+  color: var(--color-error);
+  margin-top: 0.25rem;
+  display: none;
+}
+
+.frm-option-error.is-visible { display: block; }
+
+/* ── Live preview ─────────────────────────────────────────── */
+.frm-preview-inner {
+  padding: 1.5rem;
+  max-width: 540px;
+}
+
+.frm-preview-row { margin-bottom: 1.25rem; }
+
+.frm-preview-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--od-text);
+  margin-bottom: 0.375rem;
+}
+
+.frm-preview-required { color: var(--color-error); }
+
+.frm-preview-help {
+  font-size: 0.75rem;
+  color: var(--od-muted);
+  margin: 0.1rem 0 0.375rem;
+}
+
+.frm-preview-row input,
+.frm-preview-row select,
+.frm-preview-row textarea {
+  width: 100%;
+  padding: 0.4375rem 0.625rem;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius);
+  background: var(--od-input-bg);
+  color: var(--od-muted);
+  font-size: 0.875rem;
+  box-sizing: border-box;
+  cursor: not-allowed;
+  opacity: 0.7;
+  font-family: inherit;
+}
+
+.frm-preview-check-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.frm-preview-check-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--od-muted);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+
+[data-kit-theme="dark"] .frm-option-remove:hover {
+  color: #fca5a5;
+  background: #450a0a;
+}
+
+[data-kit-theme="dark"] .frm-option-error,
+[data-kit-theme="dark"] .frm-preview-required {
+  color: #fca5a5;
+}
+
+/* ── Campaign form ────────────────────────────────────────── */
+.frm-campaign-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.875rem;
+}
+
+@media (width <= 640px) {
+  .frm-campaign-grid { grid-template-columns: 1fr; }
+}

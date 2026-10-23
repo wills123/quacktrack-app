@@ -1,0 +1,362 @@
+/*
+ * tokens.css — Quack Track Design System v2
+ * Single source of truth for all CSS custom properties.
+ *
+ * Load order: after main.css and before page styles, so this file provides
+ * the final canonical values for every shared and page stylesheet.
+ * All new stylesheets should reference these tokens via var().
+ *
+ * Attribute: data-kit-theme="dark" on <html> for dark mode.
+ * Default (no attribute): light mode.
+ */
+
+/* ============================================================
+   BRAND — invariant across themes
+   ============================================================ */
+:root {
+  /* Primary green */
+  --brand-green:       #006A4E;
+  --brand-green-light: #1a7a5e;
+  --brand-green-dark:  #004d38;
+
+  /* Accent yellow */
+  --brand-yellow:      #FFD42A;
+  --brand-yellow-dark: #e6bf24;
+  --brand-yellow-dim:  rgb(255 212 42 / 15%);
+
+  /* Text on a brand-coloured fill. Unlike --color-white / --text-inverse these
+     do not flip in dark mode, because the fill they sit on does not either. */
+  --on-brand:  #fff;     /* on green, red or dark amber */
+  --on-accent: #111827;  /* on yellow */
+
+  /* Sidebar — always dark green regardless of page theme */
+  --sb-bg:          #004d38;
+  --sb-bg-section:  rgb(255 255 255 / 3%);
+  --sb-border:      rgb(255 255 255 / 8%);
+  --sb-text:        rgb(255 255 255 / 70%);
+  --sb-text-strong: rgb(255 255 255 / 95%);
+  --sb-hover-bg:    rgb(255 255 255 / 6%);
+  --sb-active-bg:   rgb(255 212 42 / 15%);
+  --sb-active-text: #FFD42A;
+  --sb-active-line: #FFD42A;
+  --sb-width:       248px;
+  --sb-radius:      8px;
+
+  /* Semantic */
+  --color-success: #22c55e;
+  --color-warning: #FFD42A;   /* v2: yellow replaces amber #f59e0b */
+  --color-error:   #f87171;
+  --color-info:    #60a5fa;
+
+  /* Radius scale */
+  --r-xs:   3px;    /* badges, btn-sm */
+  --r-sm:   5px;    /* inputs, buttons */
+  --r-md:   8px;    /* cards */
+  --r-lg:   10px;   /* modals, panels */
+  --r-xl:   14px;   /* hero areas */
+  --r-full: 9999px; /* pills, chips */
+
+  /* Shadow scale */
+  --sh-xs: 0 1px 2px rgb(0 0 0 / 8%);
+  --sh-sm: 0 1px 3px rgb(0 0 0 / 15%), 0 1px 2px rgb(0 0 0 / 10%);
+  --sh-md: 0 4px 8px -1px rgb(0 0 0 / 20%), 0 2px 4px -1px rgb(0 0 0 / 12%);
+  --sh-lg: 0 12px 24px -4px rgb(0 0 0 / 20%), 0 4px 8px -2px rgb(0 0 0 / 10%);
+  --sh-xl: 0 24px 40px -8px rgb(0 0 0 / 30%);
+
+  /* Motion */
+  --t-fast: 0.12s ease;
+  --t-base: 0.18s ease;
+  --t-slow: 0.28s ease;
+
+  /* Typography */
+  --font-base: system-ui, -apple-system, "Segoe UI", roboto, "Helvetica Neue", arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", consolas, "Liberation Mono", menlo, monospace;
+
+  /* Legacy component contract. These names remain until every consumer has
+     migrated to the v2 names above; new CSS must use the v2 token names. */
+  --color-white: #fff;
+  --color-gray-25: #fafafa;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-focus-ring: #2563eb;
+  --color-focus-ring-offset: #fff;
+  --color-success-high-contrast: #065f46;
+  --color-warning-high-contrast: #92400e;
+  --color-error-high-contrast: #991b1b;
+  --color-success-bg-contrast: #d1fae5;
+  --color-warning-bg-contrast: #fef3c7;
+  --color-error-bg-contrast: #fee2e2;
+  --space-xs: .25rem;
+  --space-sm: .5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --font-family-base: system-ui, -apple-system, "Segoe UI", roboto, "Helvetica Neue", arial, "Noto Sans", sans-serif;
+  --font-family-mono: ui-monospace, sfmono-regular, "SF Mono", consolas, "Liberation Mono", menlo, monospace;
+  --font-size-xs: .75rem;
+  --font-size-sm: .875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --letter-spacing-tight: -.025em;
+  --letter-spacing-normal: 0;
+  --radius-sm: .25rem;
+  --radius-md: .375rem;
+  --radius-lg: .5rem;
+  --radius-xl: .75rem;
+  --radius-full: 9999px;
+
+  /* Remaining legacy contract, retained until its consumers are migrated. */
+  --color-border-light: #ccc;
+  --color-border-medium: #888;
+  --color-flash-default: #eae69e;
+  --color-flash-error: #d9534f;
+  --color-table-header: #f7f7f7;
+  --color-text-high-contrast: #000;
+  --space-8: .5rem;
+  --space-10: .625rem;
+  --space-12: .75rem;
+  --space-16: 1rem;
+  --space-20: 1.25rem;
+  --space-24: 1.5rem;
+  --space-60: 3.75rem;
+  --font-size-4xl: 2.25rem;
+  --font-weight-light: 300;
+  --font-weight-extrabold: 800;
+  --line-height-none: 1;
+  --line-height-snug: 1.375;
+  --line-height-loose: 2;
+  --letter-spacing-tighter: -.05em;
+  --letter-spacing-wide: .025em;
+  --letter-spacing-wider: .05em;
+  --letter-spacing-widest: .1em;
+  --shadow-card: 0 2px 4px rgb(0 0 0 / 10%);
+  --shadow-detail: 0 2px 4px rgb(0 0 0 / 10%);
+  --shadow-modal: 0 5px 15px rgb(0 0 0 / 30%);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 10%), 0 10px 10px -5px rgb(0 0 0 / 4%);
+  --radius-none: 0;
+  --radius-6: .375rem;
+  --radius-8: .5rem;
+  --radius-10: .625rem;
+  --radius-2xl: 1rem;
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, .2, 1);
+  --ease-in-out: cubic-bezier(.4, 0, .2, 1);
+  --ease-bounce: cubic-bezier(.68, -.55, .265, 1.55);
+  --ease-elastic: cubic-bezier(.175, .885, .32, 1.275);
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+}
+
+/* ============================================================
+   LIGHT MODE — default (no attribute needed)
+   ============================================================ */
+:root {
+  --bg:          #f6f8fa;
+  --bg-subtle:   #edf0f4;
+  --surface:     #fff;
+  --surface-2:   #f3f6f9;
+  --border:      #e2e8f0;
+  --border-subtle: #edf2f7;
+  --text-primary:   #0f172a;
+  --text-secondary: #475569;
+  --text-muted:     #94a3b8;
+  --text-inverse:   #fff;
+  --text-brand:     #006A4E;  /* green text on a surface */
+  --text-danger:    #b91c1c;
+  --input-bg:     #fff;
+  --input-border: #cbd5e1;
+  --input-focus:  #006A4E;
+  --table-header: #f8fafc;
+  --table-hover:  rgb(0 106 78 / 3%);
+  --topbar-bg:     #fff;
+  --topbar-border: #e2e8f0;
+
+  /* Compatibility aliases for the older global shell styles. */
+  --color-background-primary: var(--bg);
+  --color-text-primary:       var(--text-primary);
+
+  /* Badge tones — light */
+  --badge-in-bg:       #dcfce7;  --badge-in-text:      #15803d;
+  --badge-low-bg:      #fef9c3;  --badge-low-text:     #854d0e;
+  --badge-out-bg:      #fee2e2;  --badge-out-text:     #b91c1c;
+  --badge-info-bg:     #dbeafe;  --badge-info-text:    #1d4ed8;
+  --badge-neutral-bg:  #f1f5f9;  --badge-neutral-text: #475569;
+  --badge-use-bg:      #fee2e2;  --badge-use-text:     #b91c1c;
+  --badge-add-bg:      #dcfce7;  --badge-add-text:     #15803d;
+  --badge-xfer-bg:     #dbeafe;  --badge-xfer-text:    #1d4ed8;
+  --badge-adj-bg:      #fef9c3;  --badge-adj-text:     #854d0e;
+  --badge-return-bg:   #ede9fe;  --badge-return-text:  #6d28d9;
+}
+
+/* ============================================================
+   DARK MODE — [data-kit-theme="dark"] on <html>
+   ============================================================ */
+[data-kit-theme="dark"] {
+  /* Tell the browser to use dark OS chrome for all native form controls
+     (select popups, scrollbars, date pickers, etc.)  */
+  color-scheme: dark;
+
+  --bg:          #111827;
+  --bg-subtle:   #0f172a;
+  --surface:     #1f2937;
+  --surface-2:   #263244;
+  --border:      #2d3748;
+  --border-subtle: #1e2a3a;
+
+  /* Legacy colour tokens — flip these so old pages and global .btn styles
+     respond to dark mode without needing individual overrides */
+  --color-white:       #1f2937;
+  --color-gray-25:     #111827;
+  --color-gray-50:     #1a2535;
+  --color-gray-100:    #1e2a3a;
+  --color-gray-200:    #2d3748;
+  --color-gray-300:    #374151;
+  --color-gray-400:    #4b5563;
+  --color-gray-500:    #6b7280;
+  --color-gray-600:    #9ca3af;
+  --color-gray-700:    #d1d5db;
+  --color-gray-800:    #e5e7eb;
+  --color-gray-900:    #f9fafb;
+  --color-gray-950:    #fff;
+  --color-primary-subtle: rgb(0 106 78 / 12%);
+  --text-primary:   #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted:     #64748b;
+  --text-inverse:   #111827;
+  --text-brand:     #4ade80;  /* brand green is too dark to read on dark surfaces */
+  --text-danger:    #f87171;
+  --input-bg:     #1a2535;
+  --input-border: #334155;
+  --input-focus:  #006A4E;
+  --table-header: #1a2535;
+  --table-hover:  rgb(0 106 78 / 6%);
+  --topbar-bg:     #1f2937;
+  --topbar-border: #2d3748;
+
+  /* Keep legacy pages on the same background and text surface. */
+  --color-background-primary: var(--bg);
+  --color-text-primary:       var(--text-primary);
+
+  /* Sidebar stays #004d38 in dark mode — same as light */
+  --sb-bg-section: rgb(255 255 255 / 4%);
+  --sb-border:     rgb(255 255 255 / 10%);
+  --sb-hover-bg:   rgb(255 255 255 / 8%);
+  --sb-active-bg:  rgb(255 212 42 / 15%);
+
+  /* Badge tones — dark */
+  --badge-in-bg:       rgb(34 197 94 / 15%);  --badge-in-text:      #4ade80;
+  --badge-low-bg:      rgb(255 212 42 / 15%); --badge-low-text:     #FFD42A;
+  --badge-out-bg:      rgb(248 113 113 / 15%);--badge-out-text:     #f87171;
+  --badge-info-bg:     rgb(96 165 250 / 15%); --badge-info-text:    #93c5fd;
+  --badge-neutral-bg:  rgb(255 255 255 / 8%);--badge-neutral-text: #94a3b8;
+  --badge-use-bg:      rgb(248 113 113 / 15%);--badge-use-text:     #f87171;
+  --badge-add-bg:      rgb(34 197 94 / 15%);  --badge-add-text:     #4ade80;
+  --badge-xfer-bg:     rgb(96 165 250 / 15%); --badge-xfer-text:    #60a5fa;
+  --badge-adj-bg:      rgb(255 212 42 / 15%); --badge-adj-text:     #FFD42A;
+  --badge-return-bg:   rgb(167 139 250 / 15%);--badge-return-text:  #a78bfa;
+}
+
+/* ============================================================
+   LEGACY BRIDGE — maps old var names to new tokens
+   Keeps existing pages working without a rewrite.
+   ============================================================ */
+:root {
+  /* Color aliases */
+  --color-primary:       var(--brand-green);
+  --color-primary-light: var(--brand-green-light);
+  --color-primary-dark:  var(--brand-green-dark);
+  --color-accent:        var(--brand-yellow);
+  --color-accent-dark:   var(--brand-yellow-dark);
+
+  /* Shadow aliases */
+  --shadow-xs: var(--sh-xs);
+  --shadow-sm: var(--sh-sm);
+  --shadow-md: var(--sh-md);
+  --shadow-lg: var(--sh-lg);
+
+  /* Transition aliases */
+  --transition-fast: var(--t-fast);
+  --transition-base: var(--t-base);
+  --transition-slow: var(--t-slow);
+
+  /* od-* aliases (used by opdash.css / redesigned pages) */
+  --od-green:      var(--brand-green);
+  --od-green-dark: var(--brand-green-dark);
+  --od-yellow:     var(--brand-yellow);
+  --od-bg:         var(--bg);
+  --od-card-bg:    var(--surface);
+  --od-sidebar-bg: var(--surface);
+  --od-mist:       var(--bg-subtle);
+  --od-border:     var(--border);
+  --od-text:       var(--text-primary);
+  --od-muted:      var(--text-secondary);
+  --od-input-bg:   var(--input-bg);
+  --od-row-hover:  var(--table-hover);
+}
+
+/* ============================================================
+   GLOBAL DARK-MODE FORM CONTROLS
+   Ensures <select>, <input>, <textarea> use theme tokens in
+   dark mode. color-scheme: dark (set above) handles the native
+   OS popup list — these rules handle the visible element itself.
+   ============================================================ */
+[data-kit-theme="dark"] select,
+[data-kit-theme="dark"] input:not([type="checkbox"], [type="radio"], [type="range"]),
+[data-kit-theme="dark"] textarea {
+  background: var(--input-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--input-border) !important;
+}
+
+[data-kit-theme="dark"] select:focus,
+[data-kit-theme="dark"] input:not([type="checkbox"], [type="radio"], [type="range"]):focus,
+[data-kit-theme="dark"] textarea:focus {
+  border-color: var(--input-focus) !important;
+  background: var(--input-bg) !important;
+}
+
+/* Option elements pick up color-scheme:dark for the popup,
+   but set explicit color for the selected option shown in the box */
+[data-kit-theme="dark"] ::placeholder {
+  color: var(--text-secondary);
+  opacity: 1;
+}
+
+[data-kit-theme="dark"] option {
+  background: var(--input-bg);
+  color: var(--text-primary);
+}
+
+[data-kit-theme="dark"] optgroup {
+  background: var(--surface-2);
+  color: var(--text-muted);
+}

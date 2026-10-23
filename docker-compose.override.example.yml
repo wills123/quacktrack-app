@@ -1,0 +1,13 @@
+# Docker Compose Override Example
+# Copy this file to docker-compose.override.yml and customize for your environment
+# docker-compose.override.yml is gitignored and will not be committed
+
+services:
+  quacktrack-db:
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      # Override these with your local/production credentials
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: parts_shop
+      MYSQL_USER: parts_user
+      MYSQL_PASSWORD: password

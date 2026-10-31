@@ -90,7 +90,7 @@ foreach ((array)($page_css_map[$current_page] ?? []) as $pageCss) {
 // Environment configuration - suppress console in production
 (function() {
   'use strict';
-  var isProduction = <?= json_encode(env('APP_ENV', 'dev') === 'prod' || env('APP_ENV', 'dev') === 'production') ?>;
+  var isProduction = <?= json_encode(app_is_production()) ?>;
   var zxingLoading = null; // Track loading promise
 
   // Client-side logger that respects production mode
@@ -368,9 +368,10 @@ document.addEventListener('DOMContentLoaded', function () {
           <a href="/change_password" class="sidebar-action-link <?= ($nav_page === 'change_password') ? 'active' : '' ?>" <?= ($nav_page === 'change_password') ? 'aria-current="page"' : '' ?>>
             Change Password
           </a>
-          <a href="/logout" class="sidebar-action-link logout-link">
-            Logout
-          </a>
+          <form method="post" action="/logout" class="sidebar-logout-form">
+            <?= csrf_field() ?>
+            <button type="submit" class="sidebar-action-link sidebar-theme-toggle logout-link">Logout</button>
+          </form>
         </div>
       </div>
     </div>

@@ -7,6 +7,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/includes/session_security.php';
 require_once __DIR__ . '/includes/session_revocation.php';
+require_once __DIR__ . '/includes/auth_policy.php';
+require_once __DIR__ . '/includes/log_privacy.php';
+require_once __DIR__ . '/includes/auth_rate_limit.php';
 
 // CRITICAL: Configure sessions BEFORE include guard check
 // This must run on EVERY request, even if config.php returns early
@@ -25,7 +28,8 @@ if (!defined('QUACKTRACK_NO_SESSION') && session_status() === PHP_SESSION_NONE) 
 
     $cookieSecureFlag = getenv('SESSION_COOKIE_SECURE');
     if ($cookieSecureFlag === false || $cookieSecureFlag === '') {
-        $cookieSecureFlag = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? '1' : '0';
+        $production = in_array(getenv('APP_ENV') ?: 'prod', ['prod', 'production'], true);
+        $cookieSecureFlag = ($production || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')) ? '1' : '0';
     }
     $cookieSecure = ($cookieSecureFlag === '1');
 
@@ -62,7 +66,7 @@ require_once __DIR__ . '/includes/csrf.php';
 require_once __DIR__ . '/includes/input_schema.php';
 
 // Load environment variables from .env file if it exists
-if (file_exists(__DIR__ . '/../.env')) {
+if (is_readable(__DIR__ . '/../.env')) {
     $lines = file(__DIR__ . '/../.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
         if (strpos(trim($line), '#') === 0) {
@@ -87,13 +91,25 @@ if (!function_exists('env')) {
     }
 }
 
+/** Whether this is a production deployment: APP_ENV `prod` or `production`, and an unset APP_ENV counts as production. */
+function app_is_production(): bool
+{
+    return in_array(env('APP_ENV', 'prod'), ['prod', 'production'], true);
+}
+
+/** Development-only tools run only when APP_ENV is explicitly `dev`. */
+function app_is_development(): bool
+{
+    return env('APP_ENV', 'prod') === 'dev';
+}
+
 function require_app_base_url(): string
 {
     $base = trim(env('APP_URL'));
     if ($base !== '') {
         return rtrim($base, '/');
     }
-    if (in_array(env('APP_ENV', 'prod'), ['prod', 'production'], true)) {
+    if (app_is_production()) {
         throw new RuntimeException('APP_URL must be set in production.');
     }
     $host = $_SERVER['SERVER_NAME'] ?? '';
@@ -106,7 +122,9 @@ function require_app_base_url(): string
 
 function build_password_reset_link(string $token): string
 {
-    return require_app_base_url() . '/reset_password.php?token=' . $token;
+    $base = require_app_base_url();
+    OutboundHttp::assertSecureUrl($base);
+    return $base . '/reset_password.php?token=' . $token;
 }
 
 function hash_password_reset_token(string $token): string
@@ -246,6 +264,15 @@ function require_login(): void
 function h(?string $s): string
 {
     return htmlspecialchars($s ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+/** Whether $url is an absolute http or https URL with a host, so it is safe as a link (never javascript: or data:). */
+function is_http_url(string $url): bool
+{
+    $scheme = strtolower((string)parse_url($url, PHP_URL_SCHEME));
+    return filter_var($url, FILTER_VALIDATE_URL) !== false
+        && in_array($scheme, ['http', 'https'], true)
+        && (string)parse_url($url, PHP_URL_HOST) !== '';
 }
 
 /**
@@ -665,6 +692,10 @@ function validate_session(): bool
         return false;
     }
 
+    if (!session_auth_method_allowed((string)($_SESSION['login_method'] ?? 'local'))) {
+        return false;
+    }
+
     if (!session_version_is_current((int)$_SESSION['uid'], $_SESSION['session_version'] ?? 0)) {
         log_session_security_event('session_revoked', ['user_id' => $_SESSION['uid']]);
         return false;
@@ -941,13 +972,13 @@ function secure_login(string $email, string $password): array
         // Build query based on whether new columns exist
         if ($column_exists) {
             $query = 'SELECT u.id, u.email, u.password_hash, u.role, u.first_name, u.last_name, u.username,
-                             r.name as region_name, u.region_id, u.created_at, u.must_reset_password
+                             r.name as region_name, u.region_id, u.created_at, u.must_reset_password, u.login_method, u.session_version
                      FROM users u
                      LEFT JOIN regions r ON u.region_id = r.id
                      WHERE u.email = ?';
         } else {
             $query = 'SELECT u.id, u.email, u.password_hash, u.role, u.first_name, u.last_name, u.username,
-                             r.name as region_name, u.region_id, u.created_at
+                             r.name as region_name, u.region_id, u.created_at, u.login_method, u.session_version
                      FROM users u
                      LEFT JOIN regions r ON u.region_id = r.id
                      WHERE u.email = ?';
@@ -975,7 +1006,7 @@ function secure_login(string $email, string $password): array
             ];
         }
 
-        if (!password_verify($password, $user['password_hash'])) {
+        if (!password_verify($password, $user['password_hash']) || !user_accepts_local_credentials((string)$user['login_method'])) {
             record_login_attempt($identifier, false);
             Logger::security('login_attempt_invalid_password', [
                 'user_id' => $user['id'],
@@ -996,8 +1027,10 @@ function secure_login(string $email, string $password): array
         regenerate_session_secure();
 
         // Set session data
-        record_session_version((int)$user['id']);
+        // Keep the version verified with the password/role snapshot; never adopt a later revocation.
+        $_SESSION['session_version'] = (int)$user['session_version'];
         $_SESSION['uid'] = (int)$user['id'];
+        $_SESSION['login_method'] = 'local';
         $_SESSION['email'] = $user['email'] ?? $email;
         $_SESSION['first_name'] = $user['first_name'] ?? null;
         $_SESSION['last_name'] = $user['last_name'] ?? null;
@@ -1569,6 +1602,7 @@ class Logger
 
     public static function security(string $event, array $details = []): void
     {
+        $details = log_safe_context($details);
         $logData = [
             'level' => 'SECURITY',
             'event' => $event,
@@ -1663,6 +1697,7 @@ class Logger
 
     private static function writeLog(string $type, array $data): void
     {
+        $data = log_safe_context($data);
         // Ensure log directory exists
         if (!is_dir(self::$logDir)) {
             if (!@mkdir(self::$logDir, 0755, true)) {
@@ -1683,12 +1718,9 @@ class Logger
         $logLine = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
 
         // Use file locking to prevent corruption with error handling
-        if (@file_put_contents($filename, $logLine, FILE_APPEND | LOCK_EX) === false) {
+        if (log_private_append($filename, $logLine) === false) {
             // If file write fails, fall back to error_log
             error_log("Logger [{$type}]: " . json_encode($data));
-        } else {
-            // Set proper permissions
-            @chmod($filename, 0644);
         }
     }
 
@@ -1871,7 +1903,7 @@ set_exception_handler(function ($exception) {
     }
 
     // Show user-friendly error page
-    if (env('APP_ENV') === 'prod' || env('APP_ENV') === 'production') {
+    if (app_is_production()) {
         // Use our custom error view if available
         $errorView = __DIR__ . '/views/errors/500.view.php';
         if (file_exists($errorView)) {
@@ -2469,8 +2501,8 @@ function validate_user_registration(array $data): ValidationResult
     $password = $data['password'] ?? '';
     if (!validate_required($password)) {
         $result->addError('password', 'Password is required');
-    } elseif (!validate_length($password, 8, 255)) {
-        $result->addError('password', 'Password must be at least 8 characters long');
+    } elseif (($passwordError = password_policy_error($password)) !== null) {
+        $result->addError('password', $passwordError);
     }
     $result->setSanitizedValue('password', $password);
 
@@ -3374,6 +3406,9 @@ function cleanup_expired_sessions(): int
 }
 
 // Security headers
+const SECURITY_PERMISSIONS_POLICY = 'camera=(self), microphone=(), geolocation=(), payment=(), usb=(), serial=(), hid=(), '
+    . 'bluetooth=(), display-capture=(), accelerometer=(), gyroscope=(), magnetometer=()';
+
 function set_security_headers(): void
 {
     // Prevent clickjacking
@@ -3382,8 +3417,9 @@ function set_security_headers(): void
     // Prevent MIME type sniffing
     header('X-Content-Type-Options: nosniff');
 
-    // XSS protection
-    header('X-XSS-Protection: 1; mode=block');
+    // Browser features: only the camera (barcode scanning) for this site, nothing else (audit H12). The deprecated
+    // X-XSS-Protection header is not sent; the CSP below does that job.
+    header('Permissions-Policy: ' . SECURITY_PERMISSIONS_POLICY);
 
     // Referrer policy
     header('Referrer-Policy: strict-origin-when-cross-origin');
@@ -3398,7 +3434,7 @@ function set_security_headers(): void
     // header("Content-Security-Policy: $csp");
 
     // HTTPS enforcement in production
-    if (in_array(env('APP_ENV', 'prod'), ['prod', 'production'], true)) {
+    if (app_is_production()) {
         header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
     }
 }
@@ -3416,15 +3452,16 @@ class FileManager
 {
     private static string $uploadDir = '/var/www/uploads';
     private static int $maxFileSize = 10485760; // 10MB
+    /** Accepted types and the extension a stored file of that type gets (never the client's extension: audit H8). */
     private static array $allowedMimeTypes = [
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'image/webp',
-        'application/pdf',
-        'text/csv',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/gif' => 'gif',
+        'image/webp' => 'webp',
+        'application/pdf' => 'pdf',
+        'text/csv' => 'csv',
+        'application/vnd.ms-excel' => 'xls',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx'
     ];
 
     public static function init(): void
@@ -3475,9 +3512,9 @@ class FileManager
                 return $validation;
             }
 
-            // Generate secure filename
+            // Generate secure filename; the extension follows the detected type
             $originalName = $file['name'];
-            $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+            $extension = self::$allowedMimeTypes[$validation['mime']];
             $filename = bin2hex(random_bytes(16)) . '.' . $extension;
             $destination = self::$uploadDir . '/' . $filename;
 
@@ -3702,10 +3739,10 @@ class FileManager
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $mimeType = $finfo->file($file['tmp_name']);
 
-        if (!in_array($mimeType, self::$allowedMimeTypes)) {
+        if (!isset(self::$allowedMimeTypes[$mimeType])) {
             return [
                 'success' => false,
-                'error' => 'Invalid file type. Allowed types: ' . implode(', ', self::$allowedMimeTypes)
+                'error' => 'Invalid file type. Allowed types: ' . implode(', ', array_keys(self::$allowedMimeTypes))
             ];
         }
 
@@ -3722,7 +3759,7 @@ class FileManager
             }
         }
 
-        return ['success' => true];
+        return ['success' => true, 'mime' => $mimeType];
     }
 }
 
@@ -4125,6 +4162,15 @@ function send_password_reset_notification_email(string $email, string $reset_lin
  * @param bool $allow_legacy If true, allows 8-character minimum (for existing users)
  * @return array ['valid' => bool, 'errors' => string[], 'warnings' => string[]]
  */
+/**
+ * The first reason $password breaks the password policy, or null when it meets it. Every path that sets a password
+ * (registration, reset, change, administrator create/edit, first administrator) uses this one policy (audit H5).
+ */
+function password_policy_error(string $password): ?string
+{
+    return validate_password_strength($password)['errors'][0] ?? null;
+}
+
 function validate_password_strength(string $password, bool $allow_legacy = false): array
 {
     $errors = [];

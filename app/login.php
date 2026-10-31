@@ -14,6 +14,12 @@ if (isset($_SESSION['uid'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!local_auth_enabled()) {
+        http_response_code(403);
+        handle_form_error('Please use company sign-in.');
+        require __DIR__ . '/views/login.view.php';
+        exit;
+    }
     csrf_verify();
 
     // Verify Turnstile token (only if enabled)
@@ -52,6 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $email = req_string($_POST, 'email');
     $password = req_raw_string($_POST, 'password');
+    if (!auth_request_allowed(db(), 'login', $email)) {
+        http_response_code(429);
+        header('Retry-After: 900');
+        handle_form_error('Too many sign-in attempts. Please try again later.');
+        require __DIR__ . '/views/login.view.php';
+        exit;
+    }
+
 
     // Validate input
     if (empty($email) || empty($password)) {

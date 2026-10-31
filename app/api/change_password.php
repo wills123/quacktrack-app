@@ -19,7 +19,9 @@ try {
         throw new ForbiddenException('Invalid CSRF token');
     }
     $input = change_password_input(api_request_is_json() ? req_json(true) : $_POST);
-    $wasForced = change_password_save(db(), $userId, $input, 'validate_password_strength');
+    $changed = change_password_save(db(), $userId, $input, 'validate_password_strength', (int)$_SESSION['session_version']);
+    $_SESSION['session_version'] = $changed['session_version'];
+    $wasForced = $changed['was_forced'];
     Logger::security('password_changed_api', ['user_id' => $userId, 'was_forced' => $wasForced]);
     echo json_encode(['success' => true, 'message' => 'Password changed successfully']);
 } catch (ChangePasswordStrengthException $error) {

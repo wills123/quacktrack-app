@@ -9,7 +9,6 @@ require_login();
 header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
-header('X-XSS-Protection: 1; mode=block');
 $pdo = db();
 $current_user_id = (int)$_SESSION['uid'];
 $action = req_action();

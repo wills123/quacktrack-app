@@ -54,7 +54,12 @@ $title = 'Sign In — Quack Track';
 
       <div class="auth-card-body">
 
-        <?php if (snipe_oauth_is_configured()) : ?>
+        <?php if (company_sso_is_configured()) : ?>
+          <a href="/sso/login" class="auth-oauth-btn">Sign in with <?= h(env('SSO_DISPLAY_NAME', 'Company SSO')) ?></a>
+        <?php elseif (env('SSO_REQUIRED', '0') === '1') : ?>
+          <p role="alert">Company sign-in is not configured. Contact your administrator.</p>
+        <?php endif; ?>
+        <?php if (snipe_sso_login_enabled() && snipe_oauth_is_configured()) : ?>
             <?php $oauthUrl = snipe_oauth_authorize_url('login'); ?>
           <a href="<?= h($oauthUrl) ?>" class="auth-oauth-btn">
             <svg class="auth-oauth-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
@@ -62,15 +67,18 @@ $title = 'Sign In — Quack Track';
             </svg>
             Sign in with Snipe IT
           </a>
+            <?php if (local_auth_enabled()) : ?>
           <div class="auth-divider"><span>or use email</span></div>
+            <?php endif; ?>
         <?php endif; ?>
 
         <?php foreach (flashes() as [$type, $message]) : ?>
           <div class="auth-flash <?= h($type) ?>" role="alert"><?= h($message) ?></div>
         <?php endforeach; ?>
 
+        <?php if (local_auth_enabled()) : ?>
         <form method="post" action="/login" autocomplete="off" novalidate>
-          <?= csrf_field() ?>
+            <?= csrf_field() ?>
 
           <div class="auth-field" style="margin-bottom:14px">
             <label class="auth-label" for="email">
@@ -94,7 +102,7 @@ $title = 'Sign In — Quack Track';
                    placeholder="Enter your password">
           </div>
 
-          <?php if (is_turnstile_enabled()) : ?>
+            <?php if (is_turnstile_enabled()) : ?>
             <div class="auth-turnstile">
               <div class="cf-turnstile"
                    data-sitekey="<?= h(get_turnstile_site_key() ?: '0x4AAAAAACFLhqDm-a6VzXvH') ?>"
@@ -102,20 +110,25 @@ $title = 'Sign In — Quack Track';
                    data-size="normal"
                    aria-label="Security verification"></div>
             </div>
-          <?php endif; ?>
+            <?php endif; ?>
 
           <button type="submit" class="auth-submit">Sign In</button>
         </form>
+        <?php endif; ?>
 
       </div>
 
       <div class="auth-card-footer">
         <p class="auth-footer-text">
+          <?php if (public_registration_enabled()) : ?>
           Don't have an account?
           <a href="/register" class="auth-footer-link">Create one here</a>
+          <?php endif; ?>
         </p>
         <p class="auth-footer-text">
+          <?php if (local_auth_enabled()) : ?>
           <a href="/forgot_password.php" class="auth-footer-link">Forgot your password?</a>
+          <?php endif; ?>
         </p>
       </div>
 

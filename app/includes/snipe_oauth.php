@@ -15,7 +15,8 @@ declare(strict_types=1);
  */
 function snipe_oauth_is_configured(): bool
 {
-    return env('SNIPE_IT_OAUTH_ENABLED', '0') === '1'
+    return snipe_oauth_transport_ready()
+        && env('SNIPE_IT_OAUTH_ENABLED', '0') === '1'
         && env('SNIPE_IT_OAUTH_CLIENT_ID', '') !== ''
         && env('SNIPE_IT_OAUTH_REDIRECT_URI', '') !== ''
         && env('SNIPE_IT_OAUTH_BASE_URL', '') !== '';
@@ -29,6 +30,9 @@ function snipe_oauth_is_configured(): bool
  */
 function snipe_oauth_authorize_url(string $intent, string $returnUrl = '/'): string
 {
+    if (!snipe_oauth_is_configured()) {
+        throw new RuntimeException('Secure SSO configuration is required.');
+    }
     $state = bin2hex(random_bytes(16));
     $verifier = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
     $challenge = rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '=');
@@ -55,4 +59,19 @@ function snipe_oauth_authorize_url(string $intent, string $returnUrl = '/'): str
 function snipe_oauth_safe_return_path(string $path, string $fallback = '/'): string
 {
     return preg_match('#^/(?![/\\\\])[^\r\n]*$#', $path) === 1 ? $path : $fallback;
+}
+
+/** Refuse to send a browser to a cleartext identity provider in a production environment. */
+function snipe_oauth_transport_ready(): bool
+{
+    if (env('APP_ENV', 'prod') === 'dev') {
+        return true;
+    }
+    foreach (['SNIPE_IT_OAUTH_BASE_URL', 'SNIPE_IT_OAUTH_REDIRECT_URI', 'SNIPE_IT_API_URL'] as $key) {
+        $url = env($key);
+        if (strtolower((string)parse_url($url, PHP_URL_SCHEME)) !== 'https' || !parse_url($url, PHP_URL_HOST)) {
+            return false;
+        }
+    }
+    return true;
 }

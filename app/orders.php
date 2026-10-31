@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/includes/order_details_service.php';
 require_login();
 
 $pdo = db();
@@ -59,7 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'reord
 
     if ($order_id > 0) {
         try {
-            // Get order items (allow admins to reorder on behalf of others)
+            // Only an order the caller may view can be copied into their cart (the order-details rule).
+            if (!orders_page_can_reorder($pdo, $order_id)) {
+                flash('Order not found.', 'error');
+                header('Location: /orders');
+                exit;
+            }
             $items = $pdo->prepare('
                 SELECT poi.product_id, poi.quantity, poi.notes, poi.bill_to_store_id,
                        poi.receive_to_van_qty, poi.receive_to_region_qty, po.user_id
@@ -102,7 +108,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'reord
             }
         } catch (Exception $e) {
             qt_rethrow_bad_input($e);
-            flash('Error reordering: ' . $e->getMessage(), 'error');
+            Logger::error('orders_page_reorder_failed', $e, ['order_id' => $order_id]);
+            flash('Could not add the order to your cart. Please try again.', 'error');
         }
     }
 }

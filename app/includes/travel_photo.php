@@ -150,7 +150,7 @@ function travel_check_upload_file(array $file): void
 /** Write the decoded image under a random name and return its web path. */
 function travel_write_image(GdImage $image, string $mime, string $extension): string
 {
-    $dir = travel_upload_dir();
+    $dir = travel_upload_dir() . 'travel/';
     if (!is_dir($dir) && !travel_quietly(static fn(): bool => mkdir($dir, 0755, true)) && !is_dir($dir)) {
         throw new RuntimeException('Upload directory is not writable.');
     }
@@ -166,13 +166,13 @@ function travel_write_image(GdImage $image, string $mime, string $extension): st
         throw new RuntimeException('Failed to store uploaded image.');
     }
     travel_quietly(static fn(): bool => chmod($path, 0644));
-    return '/uploads/' . $filename;
+    return '/uploads/travel/' . $filename;
 }
 
 /** Remove the file of a stored photo path; anything that is not a path this code wrote is ignored. */
 function travel_remove_photo_file(?string $webPath): void
 {
-    if ($webPath === null || preg_match('#^/uploads/([0-9a-f]{32}\.(?:jpg|png|gif|webp))$#', $webPath, $match) !== 1) {
+    if ($webPath === null || preg_match('#^/uploads/((?:travel/)?[0-9a-f]{32}\.(?:jpg|png|gif|webp))$#', $webPath, $match) !== 1) {
         return;
     }
     $path = travel_upload_dir() . $match[1];

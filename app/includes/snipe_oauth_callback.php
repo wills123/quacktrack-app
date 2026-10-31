@@ -291,9 +291,17 @@ function snipe_oauth_claim_identity(int $qtUserId, array $snipeUser): void
  */
 function snipe_oauth_login(array $snipeUser, array $tokenData): void
 {
+    if (!snipe_sso_login_enabled()) {
+        throw new SnipeOAuthUserError('Please use company sign-in.');
+    }
     $pdo = db();
     [$userId, $created] = snipe_oauth_transaction($pdo, static function () use ($pdo, $snipeUser, $tokenData): array {
         [$qtUserId, $created] = snipe_oauth_resolve_user($snipeUser, $pdo);
+        $method = $pdo->prepare('SELECT login_method FROM users WHERE id = ? FOR UPDATE');
+        $method->execute([$qtUserId]);
+        if ($method->fetchColumn() === 'oidc') {
+            throw new SnipeOAuthUserError('This account requires company sign-in.');
+        }
         snipe_oauth_update_user_data($qtUserId, $snipeUser, $pdo);
         // Persist the token to the database (it survives logout).
         SnipeTokenManager::store($qtUserId, $tokenData, $snipeUser['permissions']);
@@ -301,7 +309,7 @@ function snipe_oauth_login(array $snipeUser, array $tokenData): void
     });
     // Only now is the account certain to exist: a rolled-back sign-in must not leave a "created" audit record.
     if ($created) {
-        Logger::security('snipe_sso_user_created', ['qt_user_id' => $userId, 'role' => snipe_oauth_role_for_department((string)$snipeUser['department'])]);
+        Logger::security('snipe_sso_user_created', ['qt_user_id' => $userId, 'role' => 'guest']);
     }
     snipe_oauth_create_session($userId, $snipeUser, $pdo);
 }
@@ -309,9 +317,8 @@ function snipe_oauth_login(array $snipeUser, array $tokenData): void
 /**
  * The id of the Quack Track user for a Snipe-IT identity, creating the account if needed, and whether it was created.
  *
- * Identity is the Snipe-IT user id once it is known. Email is only used to claim an account that has never been
- * linked to anyone; an account already tied to a different Snipe-IT user is never taken over just because the
- * emails match.
+ * Identity is the Snipe-IT user id. An email collision never links an existing local account; that requires
+ * an authenticated account-link flow. This prevents an unverified registrant from pre-claiming an SSO identity.
  *
  * @param array<string, mixed> $snipeUser
  * @return array{0: int, 1: bool}
@@ -331,8 +338,19 @@ function snipe_oauth_resolve_user(array $snipeUser, PDO $pdo): array
     $byEmail = snipe_oauth_find_user($pdo, 'email', $snipeUser['email']);
     if ($byEmail !== null) {
         snipe_oauth_require_same_identity($byEmail, $snipeUser);
-        return [(int)$byEmail['id'], false];
+        throw new SnipeOAuthUserError('Sign in to your existing account and connect Snipe-IT from Assets, or contact your administrator.');
     }
+    return snipe_oauth_insert_or_find($snipeUser, $pdo);
+}
+
+/**
+ * Insert a new identity, or use the same identity committed by a concurrent first sign-in.
+ *
+ * @param array<string, mixed> $snipeUser
+ * @return array{0: int, 1: bool}
+ */
+function snipe_oauth_insert_or_find(array $snipeUser, PDO $pdo): array
+{
     try {
         return [snipe_oauth_create_user($snipeUser, $pdo), true];
     } catch (PDOException $e) {
@@ -343,6 +361,9 @@ function snipe_oauth_resolve_user(array $snipeUser, PDO $pdo): array
             throw $e;
         }
         snipe_oauth_require_same_identity($created, $snipeUser);
+        if (empty($created['snipe_user_id'])) {
+            throw new SnipeOAuthUserError('This email already belongs to an account. Contact your administrator to link it.');
+        }
         return [(int)$created['id'], false];
     }
 }
@@ -408,7 +429,10 @@ function snipe_oauth_require_same_identity(array $user, array $snipeUser): void
  */
 function snipe_oauth_create_user(array $snipeUser, PDO $pdo): int
 {
-    $role = snipe_oauth_role_for_department((string)$snipeUser['department']);
+    if (env('SNIPE_IT_SSO_AUTO_PROVISION', env('APP_ENV') === 'dev' ? '1' : '0') !== '1') {
+        throw new SnipeOAuthUserError('Your account must be provisioned by an administrator before you can sign in.');
+    }
+    $role = 'guest';
     $pdo->prepare('INSERT INTO users (email, first_name, last_name, password_hash, role, created_at) VALUES (?, ?, ?, ?, ?, NOW())')->execute([
         $snipeUser['email'], $snipeUser['first_name'], $snipeUser['last_name'],
         // SSO accounts get an unguessable password nobody knows, so password login stays closed to them.
@@ -418,24 +442,10 @@ function snipe_oauth_create_user(array $snipeUser, PDO $pdo): int
     return (int)$pdo->lastInsertId();
 }
 
-/** The role a new account gets from the Snipe-IT department; afterwards the role belongs to Quack Track. */
-function snipe_oauth_role_for_department(string $departmentName): string
-{
-    $lower = strtolower(trim($departmentName));
-    return match (true) {
-        in_array($lower, ['administration', 'admin', 'it admin'], true) => 'admin',
-        in_array($lower, ['service desk', 'servicedesk', 'support desk', 'it support'], true) => 'service_desk',
-        in_array($lower, ['field tech lead', 'field tech leads', 'field technician lead'], true) => 'field_tech_lead',
-        default => 'field_tech',
-    };
-}
-
 /**
  * Record the person's Snipe-IT identity, department and home region at sign-in.
  *
- * The role is deliberately not touched: it is derived from the Snipe-IT department once, when the account is
- * created, and afterwards belongs to Quack Track. Otherwise anyone who can edit a department in Snipe-IT could change
- * what a person may do here.
+ * New SSO accounts start as guests. Department data never grants privileges; roles belong to Quack Track.
  *
  * @param array<string, mixed> $snipeUser
  */
@@ -444,8 +454,9 @@ function snipe_oauth_update_user_data(int $userId, array $snipeUser, PDO $pdo): 
     LocationMapper::init($pdo);
     $regionId = $snipeUser['location_id'] > 0 ? LocationMapper::mapLocationToRegion($snipeUser['location_id'], 1) : 1;
     $pdo->prepare(
-        'UPDATE users SET snipe_user_id = ?, snipe_department = ?, snipe_company = ?, snipe_location_id = ?, region_id = ?, login_method = ? WHERE id = ?'
-    )->execute([$snipeUser['id'], $snipeUser['department'] ?: null, $snipeUser['company'] ?: null, $snipeUser['location_id'] ?: null, $regionId, 'snipe_oauth', $userId]);
+        'UPDATE users SET snipe_user_id = ?, snipe_department = ?, snipe_company = ?, snipe_location_id = ?, region_id = ?,
+            session_version = session_version + (login_method <> ?), login_method = ? WHERE id = ?'
+    )->execute([$snipeUser['id'], $snipeUser['department'] ?: null, $snipeUser['company'] ?: null, $snipeUser['location_id'] ?: null, $regionId, 'snipe_oauth', 'snipe_oauth', $userId]);
 }
 
 /**
@@ -458,7 +469,7 @@ function snipe_oauth_update_user_data(int $userId, array $snipeUser, PDO $pdo): 
 function snipe_oauth_create_session(int $userId, array $snipeUser, PDO $pdo): void
 {
     $stmt = $pdo->prepare(
-        'SELECT u.id, u.email, u.first_name, u.last_name, u.username, u.role, u.region_id, r.name AS region_name
+        'SELECT u.id, u.email, u.first_name, u.last_name, u.username, u.role, u.region_id, u.session_version, r.name AS region_name
            FROM users u LEFT JOIN regions r ON u.region_id = r.id WHERE u.id = ? LIMIT 1'
     );
     $stmt->execute([$userId]);
@@ -468,7 +479,7 @@ function snipe_oauth_create_session(int $userId, array $snipeUser, PDO $pdo): vo
     }
     // New session id first, so nothing set below is ever attached to a pre-login session id.
     regenerate_session_secure();
-    record_session_version((int)$user['id']);
+    $_SESSION['session_version'] = (int)$user['session_version'];
     $_SESSION = array_merge($_SESSION, [
         'uid' => (int)$user['id'], 'email' => $user['email'], 'first_name' => $user['first_name'], 'last_name' => $user['last_name'],
         'username' => $user['username'] ?? null,

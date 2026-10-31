@@ -8,7 +8,6 @@ require_login();
 header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
-header('X-XSS-Protection: 1; mode=block');
 $pdo = db();
 $current_user_id = (int)$_SESSION['uid'];
 $action = req_action();
@@ -32,6 +31,7 @@ function products_api_image_mimes(): array
 
 function save_products_api_image(string $binary, string $uploadDir): string
 {
+    $uploadDir = rtrim($uploadDir, '/') . '/products/';
     $size = strlen($binary);
     if ($size === 0) {
         throw new UnprocessableException('Image data is empty.');
@@ -65,7 +65,7 @@ function save_products_api_image(string $binary, string $uploadDir): string
     if (!chmod($targetPath, PRODUCT_UPLOAD_FILE_MODE)) {
         error_log('products image: could not set the file mode of ' . basename($targetPath));
     }
-    return '/uploads/' . $filename;
+    return '/uploads/products/' . $filename;
 }
 
 function process_products_api_upload(array $file, string $uploadDir): string

@@ -1,6 +1,16 @@
 <?php
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/includes/after_response.php';
+
+/** The one answer to every registration attempt, whether or not the account was created (audit H3). */
+const REGISTRATION_ANSWER = 'Thanks. If those details can be used, your account is ready: sign in with your email and password. '
+    . 'If you already have an account, sign in or reset your password.';
+
+if (!public_registration_enabled()) {
+    http_response_code(404);
+    exit;
+}
 
 if (is_logged_in()) {
     redirect('/index.php');
@@ -63,57 +73,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $region_id = $sanitizedData['region_id'];
     $role = 'user'; // Set default role for new users
 
+    // Every attempt gets the same answer, redirect and timing whether or not the email or username is already taken
+    // (audit H3): the password is always hashed, nobody is signed in, and the owner of an existing email is told by
+    // email (after the response, at most once a day) instead of the visitor.
+    $hash = password_hash($password, PASSWORD_DEFAULT);
     try {
-        $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
-        $stmt->execute([$email]);
-        if ($stmt->fetch()) {
-            flash_message('An account with that email already exists', 'error');
-            redirect('/register.php');
+        $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ? OR username = ?');
+        $stmt->execute([$email, $username]);
+        $taken = $stmt->fetch() !== false;
+        if (!$taken) {
+            $pdo->prepare('INSERT INTO users (email, first_name, last_name, username, password_hash, region_id, role) VALUES (?, ?, ?, ?, ?, ?, ?)')->execute([$email, $first_name, $last_name, $username, $hash, $region_id, $role]);
+            log_security_event('user_registered', [
+                'user_id' => (int)$pdo->lastInsertId(),
+                'region_id' => $region_id
+            ]);
         }
-        $stmt = $pdo->prepare('SELECT id FROM users WHERE username = ?');
-        $stmt->execute([$username]);
-        if ($stmt->fetch()) {
-            flash_message('That username is already taken', 'error');
-            redirect('/register.php');
-        }
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-        $pdo->prepare('INSERT INTO users (email, first_name, last_name, username, password_hash, region_id, role) VALUES (?, ?, ?, ?, ?, ?, ?)')->execute([$email, $first_name, $last_name, $username, $hash, $region_id, $role]);
-        regenerate_session_secure(); // Prevent fixation and initialize session security metadata
-        $new_user_id = (int)$pdo->lastInsertId();
-        record_session_version($new_user_id);
-        $_SESSION['uid'] = $new_user_id;
-        $_SESSION['email'] = $email;
-        $_SESSION['first_name'] = $first_name;
-        $_SESSION['last_name'] = $last_name;
-        $_SESSION['username'] = $username;
-        $_SESSION['display_name'] = build_user_display_name($first_name, $last_name, $username, $email);
-        $_SESSION['region_id'] = $region_id;
-
-        // Fetch region name for session display
-        $stmt = $pdo->prepare('SELECT name FROM regions WHERE id = ?');
-        $stmt->execute([$region_id]);
-        $_SESSION['region'] = $stmt->fetchColumn();
-
-        $_SESSION['role'] = $role;
-        $_SESSION['last_activity'] = time(); // Set initial activity time
-
-        // Log successful registration
-        log_security_event('user_registered', [
-            'user_id' => $_SESSION['uid'],
-            'email' => $email,
-            'region_id' => $region_id
-        ]);
-
-        handle_form_success('Account created successfully! Welcome to Quack Track.', '/index.php');
     } catch (Throwable $e) {
         qt_rethrow_bad_input($e);
-        log_error('user_registration', $e, [
-            'email' => $email,
-            'region_id' => $region_id
-        ]);
-
-        handle_form_error('Registration failed: ' . $e->getMessage(), '/register.php');
+        // A concurrent registration of the same email or username is answered like any other taken one.
+        if (!($e instanceof PDOException && $e->getCode() === '23000')) {
+            log_error('user_registration', $e, ['region_id' => $region_id]);
+            handle_form_error('Registration failed. Please try again later.', '/register.php');
+        }
+        $taken = true;
     }
+    if ($taken) {
+        log_security_event('user_registration_refused_taken', ['region_id' => $region_id]);
+        $owner = $pdo->prepare('SELECT id FROM users WHERE email = ?');
+        $owner->execute([$email]);
+        $ownerId = (int)$owner->fetchColumn();
+        // Only the owner of an already registered email hears about it, at most once a day, so the notice can neither
+        // reveal a taken username to the visitor nor be used to flood an inbox. A failed limit check sends nothing.
+        $notice = $ownerId > 0 ? check_rate_limit('registration_notice', $ownerId, 1, 86400) : null;
+        if ($notice !== null && $notice['allowed'] && $notice['reset_at'] !== null) {
+            run_after_response(static fn () => send_account_notice_email(
+                $email,
+                'Someone tried to register with your Quack Track email',
+                "Someone tried to create a Quack Track account with this email address, which already has an account.\n\n"
+                . "If it was you, sign in, or use \"Forgot password\" on the sign-in page. If not, you can ignore this email."
+            ));
+        }
+    }
+    handle_form_success(REGISTRATION_ANSWER, '/login.php');
 }
 
 require __DIR__ . '/views/register.view.php';

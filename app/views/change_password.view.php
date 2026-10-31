@@ -144,9 +144,10 @@ $doc_title = h($page_title) . ' — Quack Track';
             <a href="/" class="auth-footer-link">&larr; Back to Dashboard</a>
           </p>
         <?php else : ?>
-          <p class="auth-footer-text">
-            <a href="/logout.php" class="auth-footer-link">Sign out instead</a>
-          </p>
+          <form method="post" action="/logout" class="auth-footer-text">
+            <?= csrf_field() ?>
+            <button type="submit" class="auth-footer-link auth-footer-button">Sign out instead</button>
+          </form>
         <?php endif; ?>
       </div>
 

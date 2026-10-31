@@ -15,10 +15,6 @@ $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 if (!is_string($requestUri)) {
     http_response_code(400);
     header('Content-Type: text/plain; charset=utf-8');
-    header('X-Frame-Options: DENY');
-    header('X-Content-Type-Options: nosniff');
-    header('X-XSS-Protection: 1; mode=block');
-    header('Referrer-Policy: strict-origin-when-cross-origin');
     echo 'Invalid request URI.';
     exit;
 }
@@ -37,6 +33,8 @@ $routes = [
     '/' => '/index.php',
     '/index' => '/index.php',
     '/login' => '/login.php',
+    '/sso/login' => '/sso_login.php',
+    '/sso/callback' => '/sso_callback.php',
     '/logout' => '/logout.php',
     '/register' => '/register.php',
     '/forgot_password' => '/forgot_password.php',
@@ -183,16 +181,13 @@ $routes = [
     '/kits/packing-slip' => '/packing_slip.php',
     '/api/kit-templates.php' => '/api/kit-templates.php',
 ];
-// Add development/test routes if not in production
-// Note: Test files have been removed from the codebase
-if (($_ENV['APP_ENV'] ?? 'dev') !== 'production') {
-// Utility routes (only in development)
-    $routes['/backup'] = '/backup.php';
-    $routes['/backup.php'] = '/backup.php';
-    $routes['/migration_runner'] = '/app/migration_runner.php';
-    $routes['/migration-runner'] = '/app/migration_runner.php';
-    $routes['/app/migration_runner.php'] = '/app/migration_runner.php';
-}
+// Development-only utilities. The router runs before config.php loads .env, so it cannot tell the environment;
+// each page answers 404 itself unless APP_ENV is explicitly `dev` (app_is_development()).
+$routes['/backup'] = '/backup.php';
+$routes['/backup.php'] = '/backup.php';
+$routes['/migration_runner'] = '/app/migration_runner.php';
+$routes['/migration-runner'] = '/app/migration_runner.php';
+$routes['/app/migration_runner.php'] = '/app/migration_runner.php';
 
 /**
  * Serve an error page with the correct HTTP status code
@@ -202,19 +197,6 @@ function serveErrorPage(int $code, ?string $customMessage = null): void
 
     // Set the HTTP response code
     http_response_code($code);
-
-    // Error pages (403/404 especially) are reached for unmatched routes
-    // before config.php is ever loaded (it's only required below for 500s,
-    // to log the error) -- so set_security_headers() in config.php never
-    // runs for them unless we do it here too. Kept minimal/inline rather
-    // than requiring config.php unconditionally, since that would start a
-    // session and DB connection on every 404.
-    if (!headers_sent()) {
-        header('X-Frame-Options: DENY');
-        header('X-Content-Type-Options: nosniff');
-        header('X-XSS-Protection: 1; mode=block');
-        header('Referrer-Policy: strict-origin-when-cross-origin');
-    }
 // Check if this is an AJAX/API request
     $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
               strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';

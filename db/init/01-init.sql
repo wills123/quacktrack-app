@@ -72,8 +72,6 @@ CREATE TABLE IF NOT EXISTS region_storage (
   CONSTRAINT fk_region_storage_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Create initial admin user with bcrypt hash of 'QuackTrack2025!'
+-- No account is seeded. Create the first administrator once with app/create_admin.php (ADMIN_EMAIL and ADMIN_PASSWORD
+-- from .env); it must change its password at first sign-in.
 INSERT INTO regions (name) VALUES ('Admin Region');
-INSERT INTO users (email, password_hash, role, region_id) 
-VALUES ('willstrain1997@gmail.com', '$2y$10$KktG2BeAVSMfKJWDO.wkuue3QfwUaVLRZkzLIKNzEqSgT4AKQcZM.', 'admin', 
-        (SELECT id FROM regions WHERE name = 'Admin Region'));

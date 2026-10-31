@@ -1,6 +1,12 @@
 <?php
 
 require_once __DIR__ . '/config.php';
+// Development only (production migrations run from admin/migrations.php or the deploy scripts).
+if (!app_is_development()) {
+    http_response_code(404);
+    echo 'Not Found';
+    exit;
+}
 require_login();
 require_permission('admin.access');
 require_permission('migrations.run');

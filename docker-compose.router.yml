@@ -15,9 +15,11 @@ services:
     container_name: quacktrack-router
     restart: unless-stopped
     ports:
-      - "${ROUTER_PORT:-8081}:80"
+      - "${ROUTER_BIND_ADDRESS:-127.0.0.1}:${ROUTER_PORT:-8081}:80"
     volumes:
       - ${QT_ROUTER_STATE_DIR:-./router-state}:/etc/nginx/state:ro
+      # Deployment-specific proxy addresses (nginx/trusted-proxies/README.md)
+      - ${QT_TRUSTED_PROXIES_DIR:-/etc/quacktrack/trusted-proxies}:/etc/nginx/trusted-proxies:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:

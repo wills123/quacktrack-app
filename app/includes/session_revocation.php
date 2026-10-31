@@ -15,15 +15,6 @@ function user_session_version(int $userId): ?int
     return $version === false ? null : (int)$version;
 }
 
-function record_session_version(int $userId): void
-{
-    $version = user_session_version($userId);
-    if ($version === null) {
-        throw new RuntimeException('User vanished during sign-in');
-    }
-    $_SESSION['session_version'] = $version;
-}
-
 /**
  * Revocation may commit while the session is being renewed.
  *

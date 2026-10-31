@@ -295,8 +295,8 @@ $emails = $emails ?? [];
             <input type="email" name="email" required>
           </div>
           <div class="form-group">
-            <label>Password (min 8 chars)</label>
-            <input type="password" name="password" required minlength="8">
+            <label>Password (12+ characters with upper and lower case, a number and a symbol)</label>
+            <input type="password" name="password" required minlength="12" maxlength="72">
           </div>
           <div class="form-group">
             <label>Region</label>
@@ -1457,7 +1457,7 @@ $emails = $emails ?? [];
         </div>
 
         <div class="form-group">
-          <label>New Password (leave blank to keep current)<input type="password" name="password" minlength="8"></label>
+          <label>New Password (leave blank to keep current)<input type="password" name="password" minlength="12" maxlength="72"></label>
         </div>
       </form>
     </div>

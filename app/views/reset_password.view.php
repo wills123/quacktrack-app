@@ -36,7 +36,7 @@ $token = $token ?? '';
       <p class="auth-brand-tagline">Inventory &amp; order management<br>for field technicians.</p>
     </div>
     <div class="auth-brand-accent">
-      <p class="auth-brand-accent-text">Choose a strong password — at least 8 characters. You'll be signed in automatically once it's set.</p>
+      <p class="auth-brand-accent-text">Choose a strong password — at least 12 characters, with upper and lower case, a number and a symbol. You can sign in after resetting it.</p>
     </div>
   </aside>
 
@@ -71,9 +71,9 @@ $token = $token ?? '';
               <input class="auth-input"
                      type="password" id="password" name="password"
                      required autocomplete="new-password"
-                     placeholder="At least 8 characters"
-                     minlength="8">
-              <span class="auth-pw-hint">Must be at least 8 characters long.</span>
+                     placeholder="At least 12 characters"
+                     minlength="12">
+              <span class="auth-pw-hint">12+ characters with upper and lower case, a number and a symbol.</span>
             </div>
 
             <div class="auth-field" style="margin-bottom:20px">
@@ -82,7 +82,7 @@ $token = $token ?? '';
                      type="password" id="confirm_password" name="confirm_password"
                      required autocomplete="new-password"
                      placeholder="Repeat your new password"
-                     minlength="8">
+                     minlength="12">
             </div>
 
             <button type="submit" class="auth-submit">Reset Password</button>

@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:1.28.0@sha256:bb22d9815c728170f72750f4e5b0d672e06176142e1d602c7e66c050100b7e5b
 #
 # Immutable release image for PHP-FPM.
 #
@@ -7,13 +7,15 @@
 # releases can run side by side (blue/green) without sharing code.
 # Runtime state lives in volumes: /var/www/uploads, /var/www/logs and
 # /var/www/sessions.
-ARG PHP_BASE_IMAGE=php:8.3.36-fpm-alpine
+# Images are pinned by digest (audit H2); doc/operations/IMAGE_PINS.md says how to update them.
+ARG PHP_BASE_IMAGE=php:8.3.36-fpm-alpine@sha256:aaf1ad25fc6484613be770743d1038e98e3e7e07409d78b97410eccdf3628f75
 FROM ${PHP_BASE_IMAGE}
 
 # Reject stale locally supplied base images as well as vulnerable cached tags.
 RUN php -r 'exit(PHP_VERSION_ID >= 80336 && PHP_VERSION_ID < 80400 ? 0 : 1);'
 
 RUN set -eux; \
+    apk upgrade --no-cache; \
     apk add --no-cache \
         libpng-dev \
         libjpeg-turbo-dev \
@@ -32,7 +34,7 @@ RUN set -eux; \
         intl \
         zip
 
-COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+COPY --from=composer:2.10.3@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc /usr/bin/composer /usr/local/bin/composer
 COPY php/custom.ini /usr/local/etc/php/conf.d/custom.ini
 
 WORKDIR /var/www/html
@@ -45,6 +47,7 @@ RUN composer install --no-dev --no-interaction --no-scripts --prefer-dist --opti
 COPY app ./app
 COPY assets ./assets
 COPY db ./db
+COPY scripts/bind_company_sso.php ./scripts/bind_company_sso.php
 
 # State directories; mount volumes over these at runtime.
 RUN mkdir -p /var/www/sessions /var/www/logs /var/www/uploads \

@@ -1,14 +1,100 @@
+# The application's settings, passed to the PHP container only (audit H1). Nothing else gets them, and the PHP
+# container gets no MySQL root password. Add a new application setting here and to .env.example.
+x-php-app-env: &php-app-env
+  APP_ENV: ${APP_ENV:-}
+  APP_URL: ${APP_URL:-}
+  APP_NAME: ${APP_NAME:-}
+  APP_SECRET: ${APP_SECRET:-}
+  APP_SECRET_PREVIOUS: ${APP_SECRET_PREVIOUS:-}
+  SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-}
+  SESSION_TIMEOUT: ${SESSION_TIMEOUT:-}
+  ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+  ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+  PURCHASING_EMAIL: ${PURCHASING_EMAIL:-}
+  FROM_EMAIL: ${FROM_EMAIL:-}
+  FROM_NAME: ${FROM_NAME:-}
+  RESEND_API_KEY: ${RESEND_API_KEY:-}
+  DB_ALLOW_PLAINTEXT: ${DB_ALLOW_PLAINTEXT:-}
+  MAX_ORDER_QUANTITY: ${MAX_ORDER_QUANTITY:-}
+  CHECKOUT_VALIDATION_ENABLED: ${CHECKOUT_VALIDATION_ENABLED:-}
+  CHECKOUT_LOCK_WAIT: ${CHECKOUT_LOCK_WAIT:-}
+  CHECKOUT_RATE_LIMIT_MAX: ${CHECKOUT_RATE_LIMIT_MAX:-}
+  CHECKOUT_STATE_DIR: ${CHECKOUT_STATE_DIR:-}
+  API_KEY_RATE_LIMIT_PER_MINUTE: ${API_KEY_RATE_LIMIT_PER_MINUTE:-}
+  REGION_STORAGE_MAX_ADJUST_DELTA: ${REGION_STORAGE_MAX_ADJUST_DELTA:-}
+  MIGRATIONS_DIR: ${MIGRATIONS_DIR:-}
+  PRODUCT_UPLOAD_DIR: ${PRODUCT_UPLOAD_DIR:-}
+  SURVEY_UPLOAD_DIR: ${SURVEY_UPLOAD_DIR:-}
+  TRAVEL_UPLOAD_DIR: ${TRAVEL_UPLOAD_DIR:-}
+  TURNSTILE_ENABLED: ${TURNSTILE_ENABLED:-}
+  TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY:-}
+  TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
+  REGISTER_LEFT_IMAGE: ${REGISTER_LEFT_IMAGE:-}
+  REGISTER_RIGHT_IMAGE: ${REGISTER_RIGHT_IMAGE:-}
+  LOGIN_LEFT_IMAGE: ${LOGIN_LEFT_IMAGE:-}
+  LOGIN_RIGHT_IMAGE: ${LOGIN_RIGHT_IMAGE:-}
+  LOCAL_AUTH_ENABLED: ${LOCAL_AUTH_ENABLED:-}
+  PUBLIC_REGISTRATION_ENABLED: ${PUBLIC_REGISTRATION_ENABLED:-}
+  AUTH_LOGIN_ACCOUNT_LIMIT: ${AUTH_LOGIN_ACCOUNT_LIMIT:-}
+  AUTH_LOGIN_IP_LIMIT: ${AUTH_LOGIN_IP_LIMIT:-}
+  AUTH_RECOVERY_ACCOUNT_LIMIT: ${AUTH_RECOVERY_ACCOUNT_LIMIT:-}
+  AUTH_RECOVERY_IP_LIMIT: ${AUTH_RECOVERY_IP_LIMIT:-}
+  SSO_ENABLED: ${SSO_ENABLED:-}
+  SSO_REQUIRED: ${SSO_REQUIRED:-}
+  SSO_DISPLAY_NAME: ${SSO_DISPLAY_NAME:-}
+  SSO_ISSUER_URL: ${SSO_ISSUER_URL:-}
+  SSO_CLIENT_ID: ${SSO_CLIENT_ID:-}
+  SSO_CLIENT_SECRET: ${SSO_CLIENT_SECRET:-}
+  SSO_CALLBACK_URL: ${SSO_CALLBACK_URL:-}
+  SSO_SESSION_MAX_AGE: ${SSO_SESSION_MAX_AGE:-}
+  SNIPE_IT_ENABLED: ${SNIPE_IT_ENABLED:-}
+  SNIPE_IT_API_URL: ${SNIPE_IT_API_URL:-}
+  SNIPE_IT_API_KEY: ${SNIPE_IT_API_KEY:-}
+  SNIPE_IT_API_TIMEOUT: ${SNIPE_IT_API_TIMEOUT:-}
+  SNIPE_IT_CACHE_TTL: ${SNIPE_IT_CACHE_TTL:-}
+  SNIPE_IT_ALLOW_INSECURE_HTTP: ${SNIPE_IT_ALLOW_INSECURE_HTTP:-}
+  SNIPE_TOKEN_MAX_AGE: ${SNIPE_TOKEN_MAX_AGE:-}
+  SNIPE_SYNC_LOG_RETENTION_DAYS: ${SNIPE_SYNC_LOG_RETENTION_DAYS:-}
+  SNIPE_IT_OAUTH_ENABLED: ${SNIPE_IT_OAUTH_ENABLED:-}
+  SNIPE_IT_OAUTH_CLIENT_ID: ${SNIPE_IT_OAUTH_CLIENT_ID:-}
+  SNIPE_IT_OAUTH_CLIENT_SECRET: ${SNIPE_IT_OAUTH_CLIENT_SECRET:-}
+  SNIPE_IT_OAUTH_REDIRECT_URI: ${SNIPE_IT_OAUTH_REDIRECT_URI:-}
+  SNIPE_IT_OAUTH_BASE_URL: ${SNIPE_IT_OAUTH_BASE_URL:-}
+  SNIPE_IT_SSO_AUTO_PROVISION: ${SNIPE_IT_SSO_AUTO_PROVISION:-}
+  ACUMATICA_ENABLED: ${ACUMATICA_ENABLED:-}
+  ACUMATICA_API_URL: ${ACUMATICA_API_URL:-}
+  ACUMATICA_ALLOW_INSECURE_HTTP: ${ACUMATICA_ALLOW_INSECURE_HTTP:-}
+  ACUMATICA_ENDPOINT_NAME: ${ACUMATICA_ENDPOINT_NAME:-}
+  ACUMATICA_API_VERSION: ${ACUMATICA_API_VERSION:-}
+  ACUMATICA_USERNAME: ${ACUMATICA_USERNAME:-}
+  ACUMATICA_PASSWORD: ${ACUMATICA_PASSWORD:-}
+  ACUMATICA_COMPANY: ${ACUMATICA_COMPANY:-}
+  ACUMATICA_BRANCH: ${ACUMATICA_BRANCH:-}
+  ACUMATICA_API_TIMEOUT: ${ACUMATICA_API_TIMEOUT:-}
+  ACUMATICA_CACHE_TTL: ${ACUMATICA_CACHE_TTL:-}
+  QUICKQUEUE_API_BASE_URL: ${QUICKQUEUE_API_BASE_URL:-}
+  QUICKQUEUE_ALLOW_INSECURE_HTTP: ${QUICKQUEUE_ALLOW_INSECURE_HTTP:-}
+  QUICKQUEUE_API_TOKEN: ${QUICKQUEUE_API_TOKEN:-}
+  QUICKQUEUE_API_TIMEOUT: ${QUICKQUEUE_API_TIMEOUT:-}
+  CLIENT_ERROR_API_KEY: ${CLIENT_ERROR_API_KEY:-}
+  CLIENT_ERROR_RATE_LIMIT_MAX: ${CLIENT_ERROR_RATE_LIMIT_MAX:-}
+  CLIENT_ERROR_RATE_LIMIT_DIR: ${CLIENT_ERROR_RATE_LIMIT_DIR:-}
+
 
 services:
   quacktrack-nginx:
     restart: unless-stopped
-    image: nginx:1.27-alpine
+    image: nginx:1.30.6-alpine@sha256:47928bf67eb62a1863cb08d9ecb52d3e704304ba614eaee17884204677702951
     ports:
-      - "8081:80"
+      - "${QT_BIND_ADDRESS:-127.0.0.1}:8081:80"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./:/var/www/html:ro
+      # The repository mount must not carry the secrets file into the container (audit H1).
+      - /dev/null:/var/www/html/.env:ro
       - ./uploads:/var/www/uploads:ro
+      # Deployment-specific proxy addresses (nginx/trusted-proxies/README.md)
+      - ${QT_TRUSTED_PROXIES_DIR:-./nginx/trusted-proxies}:/etc/nginx/trusted-proxies:ro
     depends_on:
       - quacktrack-php
       - quacktrack-db
@@ -23,13 +109,8 @@ services:
     build:
       context: .
       dockerfile: php/Dockerfile
-    env_file:
-      - ./.env
     environment:
-      APP_ENV: ${APP_ENV}
-      APP_SECRET: ${APP_SECRET}
-      ADMIN_EMAIL: ${ADMIN_EMAIL}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      <<: *php-app-env
       PHP_MEMORY_LIMIT: 256M
       UPLOAD_MAX_FILESIZE: 100M
       POST_MAX_SIZE: 100M
@@ -40,6 +121,8 @@ services:
       DB_SSL_CA: /etc/quacktrack/db-ca/ca.pem
     volumes:
       - ./:/var/www/html
+      # Settings come from the allowlist above, not from the secrets file in the repository mount (audit H1).
+      - /dev/null:/var/www/html/.env:ro
       - quacktrack_db_ca:/etc/quacktrack/db-ca:ro
       - quacktrack_vendor_data:/var/www/html/vendor
       - ./assets:/var/www/assets:ro
@@ -55,7 +138,7 @@ services:
 
   # One-shot: creates the CA and the database's TLS certificate (see docker/mysql/init-certs.sh).
   quacktrack-db-certs:
-    image: mysql:8.0
+    image: ${QT_MYSQL_IMAGE:-mysql:8.0.46@sha256:7dcddc01f13bab2f15cde676d44d01f61fc9f99fe7785e86196dfc07d358ae2b}
     restart: "no"
     entrypoint: ["/bin/sh", "/init-certs.sh"]
     environment:
@@ -68,9 +151,7 @@ services:
 
   quacktrack-db:
     restart: unless-stopped
-    image: mysql:8.0
-    env_file:
-      - ./.env
+    image: ${QT_MYSQL_IMAGE:-mysql:8.0.46@sha256:7dcddc01f13bab2f15cde676d44d01f61fc9f99fe7785e86196dfc07d358ae2b}
     depends_on:
       quacktrack-db-certs:
         condition: service_completed_successfully

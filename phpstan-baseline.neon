@@ -1,0 +1,126 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Binary operation \"/\" between int\\|string\\|false\\|null and 10 results in an error\\.$#"
+			count: 3
+			path: app/admin.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_reverse expects array, array\\<int, string\\>\\|false given\\.$#"
+			count: 2
+			path: app/admin.php
+
+		-
+			message: "#^Parameter \\#2 \\$timestamp of function date expects int\\|null, int\\|false given\\.$#"
+			count: 1
+			path: app/admin/api_keys.php
+
+		-
+			message: "#^Parameter \\#2 \\$offset of function array_slice expects int, float\\|int\\<0, max\\> given\\.$#"
+			count: 1
+			path: app/admin_files.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_reverse expects array, array\\<int, string\\>\\|false given\\.$#"
+			count: 2
+			path: app/admin_logs.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_reverse expects array, array\\<int, string\\>\\|false given\\.$#"
+			count: 1
+			path: app/admin_sessions.php
+
+		-
+			message: "#^Argument of an invalid type array\\<int, string\\>\\|false supplied for foreach, only iterables are supported\\.$#"
+			count: 2
+			path: app/config.php
+
+		-
+			message: "#^Function sanitize_email\\(\\) should return string but returns string\\|false\\.$#"
+			count: 1
+			path: app/config.php
+
+		-
+			message: "#^Parameter \\#1 \\$haystack of function strpos expects string, string\\|false given\\.$#"
+			count: 3
+			path: app/config.php
+
+		-
+			message: "#^Parameter \\#1 \\$name of function setcookie expects string, string\\|false given\\.$#"
+			count: 1
+			path: app/config.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\<int, string\\>\\|false given\\.$#"
+			count: 1
+			path: app/config.php
+
+		-
+			message: "#^Parameter \\#2 \\$callback of function array_filter expects \\(callable\\(string\\)\\: bool\\)\\|null, Closure\\(mixed\\)\\: \\(non\\-falsy\\-string\\|false\\) given\\.$#"
+			count: 1
+			path: app/config.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of static method AuditLogger\\:\\:safeTruncate\\(\\) expects string\\|null, string\\|false given\\.$#"
+			count: 2
+			path: app/helpers/audit_logger.php
+
+		-
+			message: "#^Method AcumaticaClient\\:\\:processUid\\(\\) should return int but returns int\\|false\\.$#"
+			count: 1
+			path: app/includes/AcumaticaClient.php
+
+		-
+			message: "#^Parameter \\#2 \\$data of function hash expects string, string\\|false given\\.$#"
+			count: 1
+			path: app/includes/AcumaticaClient.php
+
+		-
+			message: "#^Parameter \\#2 \\$data of function hash expects string, string\\|false given\\.$#"
+			count: 1
+			path: app/includes/SnipeItClient.php
+
+		-
+			message: "#^Parameter \\#4 \\$body of static method SnipeHttp\\:\\:send\\(\\) expects string\\|null, string\\|false\\|null given\\.$#"
+			count: 2
+			path: app/includes/SnipeItClient.php
+
+		-
+			message: "#^Function form_validate_answer\\(\\) should return array\\{ok\\: bool, text\\: string\\|null, json\\: string\\|null, error\\: string\\|null\\} but returns array\\{ok\\: true, text\\: non\\-empty\\-string\\|null, json\\: non\\-empty\\-string\\|false\\|null, error\\: null\\}\\.$#"
+			count: 1
+			path: app/includes/form_answer_validation.php
+
+		-
+			message: "#^Method VanStockManager\\:\\:getStoreName\\(\\) should return string but returns int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\.$#"
+			count: 1
+			path: app/includes/van_stock_manager.php
+
+		-
+			message: "#^Argument of an invalid type array\\<int, string\\>\\|false supplied for foreach, only iterables are supported\\.$#"
+			count: 1
+			path: app/migration_runner.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function sort expects TArray of array\\<string\\>, array\\<int, string\\>\\|false given\\.$#"
+			count: 1
+			path: app/migration_runner.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|false given\\.$#"
+			count: 1
+			path: app/views/admin_dashboard_new.view.php
+
+		-
+			message: "#^Parameter \\#1 \\$s of function h expects string\\|null, string\\|false given\\.$#"
+			count: 1
+			path: app/views/admin_logs.view.php
+
+		-
+			message: "#^Parameter \\#1 \\$s of function h expects string\\|null, string\\|false given\\.$#"
+			count: 1
+			path: app/views/admin_sessions.view.php
+
+		-
+			message: "#^Parameter \\#2 \\$timestamp of function date expects int\\|null, int\\|false given\\.$#"
+			count: 1
+			path: app/views/index.view.php

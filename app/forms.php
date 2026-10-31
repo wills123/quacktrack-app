@@ -150,7 +150,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Throwable $e) {
         qt_rethrow_bad_input($e);
         Logger::error('forms_page_action_failed', $e, ['action' => $action]);
-        flash_message('Action failed: ' . $e->getMessage(), 'error');
+        // Validation messages are written for people; anything else (a database error) stays in the log (audit H11).
+        $userMessage = $e instanceof InvalidArgumentException || $e instanceof ClientErrorException
+            ? $e->getMessage() : 'Please try again or contact an administrator.';
+        flash_message('Action failed: ' . $userMessage, 'error');
         redirect('/forms?tab=' . $tab);
     }
 }

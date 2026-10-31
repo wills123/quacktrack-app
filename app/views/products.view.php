@@ -1441,6 +1441,9 @@ require __DIR__ . '/components/modals/scanner-modal.php';
     if (product.purchase_url) {
       try {
         const urlObj = new URL(product.purchase_url);
+        if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
+          throw new Error('not an http(s) link');
+        }
         purchaseUrlContainer.innerHTML = '<a href="' + escapeHtml(product.purchase_url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(urlObj.hostname) + ' ↗</a>';
       } catch (e) {
         purchaseUrlContainer.textContent = product.purchase_url;

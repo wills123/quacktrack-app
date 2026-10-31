@@ -117,11 +117,11 @@ $__flashes = flashes();
             id="password"
             name="password"
             required
-            minlength="8"
+            minlength="12"
             aria-describedby="password-help"
             placeholder="Create a strong password"
             autocomplete="new-password">
-          <div id="password-help" class="form-help">Choose a strong password with at least 8 characters</div>
+          <div id="password-help" class="form-help">Choose a strong password: 12+ characters with upper and lower case, a number and a symbol</div>
           <!-- Password strength indicator will be inserted here by JavaScript -->
         </div>
 
@@ -133,7 +133,7 @@ $__flashes = flashes();
             id="confirm"
             name="confirm"
             required
-            minlength="8"
+            minlength="12"
             aria-describedby="confirm-help"
             placeholder="Re-enter your password"
             autocomplete="new-password">

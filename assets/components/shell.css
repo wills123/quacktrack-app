@@ -353,6 +353,10 @@
   color: #fca5a5;
 }
 
+.sidebar-logout-form {
+  margin: 0;
+}
+
 .sidebar-theme-toggle {
   background: none;
   border: none;

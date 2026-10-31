@@ -8,7 +8,6 @@ require_login();
 header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
-header('X-XSS-Protection: 1; mode=block');
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
@@ -41,13 +40,7 @@ try {
         throw new NotFoundException('Order not found');
     }
 
-    $viewer = [
-        'user_id' => (int)$_SESSION['uid'],
-        'region_id' => (int)($_SESSION['region_id'] ?? 0),
-        'all' => has_permission('orders.view_all') || has_permission('orders.manage'),
-        'region' => has_permission('orders.view_region'),
-    ];
-    if (!order_details_can_view($order, $viewer)) {
+    if (!order_details_can_view($order, order_details_viewer())) {
         throw new ForbiddenException('Access denied. You do not have permission to view this order.');
     }
 

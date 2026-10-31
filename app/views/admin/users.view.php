@@ -20,7 +20,7 @@ require __DIR__ . '/../header.php';
     <label>Last Name<input type="text" name="last_name" required></label>
     <label>Username<input type="text" name="username" required></label>
     <label>Email<input type="email" name="email" required></label>
-    <label>Password (min 8 chars)<input type="password" name="password" required minlength="8"></label>
+    <label>Password (12+ characters with upper and lower case, a number and a symbol)<input type="password" name="password" required minlength="12" maxlength="72"></label>
     <label>Region
       <select name="region_id" required>
         <option value="">Select a region</option>
@@ -154,7 +154,7 @@ require __DIR__ . '/../header.php';
         </div>
 
         <div class="form-group">
-          <label>New Password (leave blank to keep current)<input type="password" name="password" minlength="8"></label>
+          <label>New Password (leave blank to keep current)<input type="password" name="password" minlength="12" maxlength="72"></label>
         </div>
       </form>
     </div>

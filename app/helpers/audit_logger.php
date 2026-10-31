@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../includes/log_privacy.php';
+
 /**
  * Centralized audit logging helper for recording high-value actions.
  * Usage example:
@@ -17,6 +19,7 @@ class AuditLogger
      */
     public static function log(string $action, array $context = []): void
     {
+        $context = log_safe_context($context);
         $action = trim($action);
         if ($action === '') {
             return;
@@ -83,6 +86,7 @@ class AuditLogger
 
     private static function buildPayload(string $action, array $context): array
     {
+        $context = log_safe_context($context);
         $metadata = $context['metadata'] ?? [];
         if (!is_array($metadata)) {
             $metadata = ['value' => $metadata];
@@ -100,7 +104,7 @@ class AuditLogger
             'metadata' => self::encodeMetadata($metadata),
             'ip_address' => $context['ip_address'] ?? ($_SERVER['REMOTE_ADDR'] ?? null),
             'user_agent' => self::safeTruncate($context['user_agent'] ?? ($_SERVER['HTTP_USER_AGENT'] ?? null), 255),
-            'request_uri' => self::safeTruncate($context['request_uri'] ?? ($_SERVER['REQUEST_URI'] ?? null), 255),
+            'request_uri' => self::safeTruncate(log_safe_uri((string)($context['request_uri'] ?? ($_SERVER['REQUEST_URI'] ?? ''))), 255),
             'request_method' => $context['request_method'] ?? ($_SERVER['REQUEST_METHOD'] ?? null)
         ];
     }

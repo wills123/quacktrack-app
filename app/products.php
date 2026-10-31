@@ -69,6 +69,7 @@ function normalize_barcode(string $barcode): string
 
 function save_product_image_binary(string $binary, string $uploadDir): string
 {
+    $uploadDir = rtrim($uploadDir, '/') . '/products/';
 
     $size = strlen($binary);
     if ($size === 0) {
@@ -100,7 +101,7 @@ function save_product_image_binary(string $binary, string $uploadDir): string
         throw new RuntimeException('Failed to store uploaded image.');
     }
     @chmod($targetPath, 0644);
-    return '/uploads/' . $filename;
+    return '/uploads/products/' . $filename;
 }
 
 function process_uploaded_product_image(array $file, string $uploadDir): string
@@ -158,8 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add')
     $purchase_url = req_string($_POST, 'purchase_url');
     $is_tracked_asset = isset($_POST['is_tracked_asset']) ? 1 : 0;
     $errors = [];
-    if (!empty($purchase_url) && !filter_var($purchase_url, FILTER_VALIDATE_URL)) {
-        $errors[] = 'Purchase URL must be a valid URL (e.g., https://example.com)';
+    if (!empty($purchase_url) && !is_http_url($purchase_url)) {
+        $errors[] = 'Purchase URL must be a valid http or https URL (e.g., https://example.com)';
     }
 
     if (empty($product_id)) {
@@ -304,6 +305,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'impor
             for ($row = 2; $row <= $highestRow; ++$row) {
                 $product_id = trim($worksheet->getCell('B' . $row)->getValue() ?? '');
                 $name = trim($worksheet->getCell('D' . $row)->getValue() ?? '');
+                // An imported purchase URL is kept only when it is a safe http(s) link.
+                $importUrl = trim((string)($worksheet->getCell('N' . $row)->getValue() ?? ''));
                 if (!empty($product_id) && !empty($name)) {
                     try {
                         $stmt->execute([
@@ -316,7 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'impor
                             trim($worksheet->getCell('H' . $row)->getValue() ?? '') ?: 'active',
                             trim($worksheet->getCell('L' . $row)->getValue() ?? '') ?: null,
                             trim($worksheet->getCell('M' . $row)->getValue() ?? '') ?: null,
-                            trim($worksheet->getCell('N' . $row)->getValue() ?? '') ?: null
+                            is_http_url($importUrl) ? $importUrl : null
                         ]);
                         $prodId = $pdo->lastInsertId();
                         $vanStockStmt->execute([$prodId, $current_user_id]);
@@ -358,8 +361,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit'
     $acumatica_inventory_id = req_string($_POST, 'acumatica_inventory_id');
     $acumatica_default_vendor_id = req_string($_POST, 'acumatica_default_vendor_id');
     $is_tracked_asset = isset($_POST['is_tracked_asset']) ? 1 : 0;
-    if (!empty($purchase_url) && !filter_var($purchase_url, FILTER_VALIDATE_URL)) {
-        flash('Purchase URL must be a valid URL.', 'error');
+    if (!empty($purchase_url) && !is_http_url($purchase_url)) {
+        flash('Purchase URL must be a valid http or https URL.', 'error');
         header('Location: /products');
         exit;
     }

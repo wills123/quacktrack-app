@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function loadOrderDetails(orderId) {
   try {
-    const data = await makeAPICall(`/api/order_details.php?order_id=${orderId}`, {}, {
+    const data = await makeAPICall(`/api/order_details.php?order_id=${encodeURIComponent(orderId)}`, {}, {
       timeout: 10000,
       retries: 1,
       context: 'Loading order details',
@@ -329,24 +329,24 @@ async function loadOrderDetails(orderId) {
 
     const technicianLabel = order.user_display || order.user_email || `User #${order.user_id}`;
     const technicianHtml  = isAdminOrdersView
-      ? `<div class="orders-detail-row"><span class="orders-detail-label">Technician</span><span class="orders-detail-value">${technicianLabel}</span></div>`
+      ? `<div class="orders-detail-row"><span class="orders-detail-label">Technician</span><span class="orders-detail-value">${escapeOrdersHtml(technicianLabel)}</span></div>`
       : '';
 
-    const statusBadgeClass = `qt-status-badge qt-status-badge-${order.status}`;
-    const statusLabel = order.status.charAt(0).toUpperCase() + order.status.slice(1);
+    const statusBadgeClass = `qt-status-badge qt-status-badge-${String(order.status).replace(/[^a-z_-]/g, '')}`;
+    const statusLabel = escapeOrdersHtml(order.status.charAt(0).toUpperCase() + order.status.slice(1));
 
     let html = `
       <div class="orders-modal-summary">
-        <div class="orders-modal-order-number">${order.order_number}</div>
+        <div class="orders-modal-order-number">${escapeOrdersHtml(order.order_number)}</div>
         <div class="orders-detail-grid">
           <div class="orders-detail-row">
             <span class="orders-detail-label">Store</span>
-            <span class="orders-detail-value">${order.store_name || 'N/A'}</span>
+            <span class="orders-detail-value">${escapeOrdersHtml(order.store_name || 'N/A')}</span>
           </div>
           ${technicianHtml}
           <div class="orders-detail-row">
             <span class="orders-detail-label">Date</span>
-            <span class="orders-detail-value">${new Date(order.created_at).toLocaleString()}</span>
+            <span class="orders-detail-value">${escapeOrdersHtml(new Date(order.created_at).toLocaleString())}</span>
           </div>
           <div class="orders-detail-row">
             <span class="orders-detail-label">Status</span>
@@ -354,7 +354,7 @@ async function loadOrderDetails(orderId) {
               <span id="orderStatusBadge" class="${statusBadgeClass}">${statusLabel}</span>
             </span>
           </div>
-          ${order.notes ? `<div class="orders-detail-row orders-detail-row--full"><span class="orders-detail-label">Notes</span><span class="orders-detail-value">${order.notes}</span></div>` : ''}
+          ${order.notes ? `<div class="orders-detail-row orders-detail-row--full"><span class="orders-detail-label">Notes</span><span class="orders-detail-value">${escapeOrdersHtml(order.notes)}</span></div>` : ''}
         </div>
       </div>
 
@@ -381,13 +381,13 @@ async function loadOrderDetails(orderId) {
       html += `
         <div class="orders-item">
           ${item.image_path
-            ? `<img class="orders-item-img" src="${imageUrl(item.image_path)}" alt="${item.name}">`
+            ? `<img class="orders-item-img" src="${escapeOrdersHtml(imageUrl(item.image_path))}" alt="${escapeOrdersHtml(item.name)}">`
             : '<div class="orders-item-img orders-item-no-img">No Image</div>'
           }
           <div class="orders-item-info">
             <p class="orders-item-name">${escapeOrdersHtml(item.name)}</p>
             <p class="orders-item-sku">SKU: ${escapeOrdersHtml(item.sku)}</p>
-            <p class="orders-item-qty">Qty: ${item.quantity}</p>
+            <p class="orders-item-qty">Qty: ${Number(item.quantity)}</p>
             <p class="orders-item-qty">Charge to: ${escapeOrdersHtml(item.bill_to_store_name || order.store_name || 'Unassigned')}</p>
             ${item.notes ? `<p class="orders-item-notes">${escapeOrdersHtml(item.notes)}</p>` : ''}
             ${trackedReceiptHtml}
@@ -406,14 +406,13 @@ async function loadOrderDetails(orderId) {
   } catch (error) {
     const errorMsg = error.message || 'Unknown error occurred';
     document.getElementById('orderDetailsContent').innerHTML =
-      `<p class="orders-modal-error">Failed to load order details: ${errorMsg}</p>`;
+      `<p class="orders-modal-error">Failed to load order details: ${escapeOrdersHtml(errorMsg)}</p>`;
   }
 }
 
+// Escapes text for HTML content and quoted attributes alike (a div's innerHTML leaves quotes as they are).
 function escapeOrdersHtml(value) {
-  const div = document.createElement('div');
-  div.textContent = String(value ?? '');
-  return div.innerHTML;
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
 }
 </script>
 

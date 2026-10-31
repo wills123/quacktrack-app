@@ -735,12 +735,17 @@ function updateBillingSummary() {
     if (entries.length <= 1) { section.hidden = true; return; }
 
     section.hidden = false;
-    let html = '<table class="cart-billing-table"><thead><tr><th>Store</th><th>Items</th><th>Qty</th></tr></thead><tbody>';
+    // Store names are administrator-set text: build the cells with textContent, never markup (audit H14).
+    const table = document.createElement('table');
+    table.className = 'cart-billing-table';
+    table.innerHTML = '<thead><tr><th>Store</th><th>Items</th><th>Qty</th></tr></thead>';
+    const body = document.createElement('tbody');
     entries.forEach(([, d]) => {
-        html += `<tr><td>${d.name}</td><td>${d.items}</td><td>${d.quantity}</td></tr>`;
+        const row = body.insertRow();
+        [d.name, d.items, d.quantity].forEach(value => { row.insertCell().textContent = String(value ?? ''); });
     });
-    html += '</tbody></table>';
-    document.getElementById('billingBreakdown').innerHTML = html;
+    table.appendChild(body);
+    document.getElementById('billingBreakdown').replaceChildren(table);
 }
 
 async function saveTemplate(e) {
